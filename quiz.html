@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Realism Quiz - Philosophy & Logic</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .nav-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .auth-header {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            color: white;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .auth-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .auth-tab-content {
+            display: none;
+        }
+
+        .auth-tab-content.active {
+            display: block;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .quiz-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .quiz-question {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .quiz-options {
+            list-style: none;
+        }
+
+        .quiz-option {
+            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .quiz-option.selected {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .quiz-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .quiz-results {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .quiz-results h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .score-display {
+            font-size: 2em;
+            font-weight: bold;
+            color: #17a2b8;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s;
+        }
+
+        .auth-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #e17055;
+        }
+
+        .user-info h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+
+        .quiz-history {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .quiz-history-item:last-child {
+            border-bottom: none;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .quiz-history-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="auth-header" id="authHeader">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span>Welcome, <span id="userName"></span>!</span>
+                </div>
+                <button class="auth-btn" id="loginBtn" onclick="showAuthModal()">Login</button>
+                <button class="auth-btn" id="registerBtn" onclick="showAuthModal('register')">Register</button>
+                <button class="auth-btn" id="profileBtn" onclick="openProfile()" style="display: none;">Profile</button>
+                <button class="auth-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+            </div>
+            
+            <a href="index.html" class="nav-link">← Back to Main</a>
+            
+            <h1>Modal Realism Quiz</h1>
+            <p>Test Your Knowledge of Extended Modal Realism, Perdurantism & Causality</p>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('quiz')">Take Quiz</button>
+                <button class="tab" onclick="switchTab('auth')">Login/Register</button>
+                <button class="tab" onclick="switchTab('dashboard')">Dashboard</button>
+            </div>
+
+            <!-- Quiz Tab -->
+            <div id="quiz" class="tab-content active">
+                <div class="quiz-section">
+                    <div id="quizContainer">
+                        <h2>Modal Realism & Philosophy Quiz</h2>
+                        <p>Test your understanding of Takashi Yagisawa's extended modal realism, perdurantism, and causality.</p>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                        </div>
+                        
+                        <div id="questionContainer"></div>
+                        
+                        <div class="quiz-controls">
+                            <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn" style="display: none;">Previous</button>
+                            <button class="btn" onclick="nextQuestion()" id="nextBtn">Next</button>
+                            <button class="btn btn-success" onclick="submitQuiz()" id="submitBtn" style="display: none;">Submit Quiz</button>
+                        </div>
+                    </div>
+                    
+                    <div id="resultsContainer" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Authentication Tab -->
+            <div id="auth" class="tab-content">
+                <div class="auth-section">
+                    <h2>User Authentication</h2>
+                    <div id="loginForm" class="auth-form">
+                        <h3>Login</h3>
+                        <div class="form-group">
+                            <label for="loginEmail">Email:</label>
+                            <input type="email" id="loginEmail" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password:</label>
+                            <input type="password" id="loginPassword" placeholder="Enter your password">
+                        </div>
+                        <button class="btn" onclick="login()">Login</button>
+                        <p style="text-align: center; margin-top: 15px;">
+                            Don't have an account? <a href="#" onclick="showRegister()" style="color: #667eea;">Register here</a>
+                        </p>
+                    </div>
+                    
+                    <div id="registerForm" class="auth-form" style="display: none;">
+                        <h3>Register</h3>
+                        <div class="form-group">
+                            <label for="registerName">Full Name:</label>
+                            <input type="text" id="registerName" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email:</label>
+                            <input type="email" id="registerEmail" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password:</label>
+                            <input type="password" id="registerPassword" placeholder="Enter your password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password:</label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                        </div>
+                        <button class="btn" onclick="register()">Register</button>
+                        <p style="text-align: center; margin-top: 15px;">
+                            Already have an account? <a href="#" onclick="showLogin()" style="color: #667eea;">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <h3>Welcome, <span id="userName"></span>!</h3>
+                    <p>Email: <span id="userEmail"></span></p>
+                    <button class="btn btn-danger" onclick="logout()">Logout</button>
+                </div>
+                
+                <div id="loginPrompt" class="auth-section">
+                    <h3>Please login to view your dashboard</h3>
+                    <p>You need to be logged in to see your quiz history and progress.</p>
+                    <button class="btn" onclick="switchTab('auth')">Go to Login</button>
+                </div>
+                
+                <div class="quiz-history" id="quizHistory" style="display: none;">
+                    <h3>Quiz History</h3>
+                    <div id="historyList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <h2>Authentication</h2>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+            </div>
+            
+            <div id="loginTab" class="auth-tab-content active">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="modalLoginEmail">Email:</label>
+                        <input type="email" id="modalLoginEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalLoginPassword">Password:</label>
+                        <input type="password" id="modalLoginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn" onclick="modalLogin()">Login</button>
+                </div>
+            </div>
+            
+            <div id="registerTab" class="auth-tab-content">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="modalRegisterName">Full Name:</label>
+                        <input type="text" id="modalRegisterName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalRegisterEmail">Email:</label>
+                        <input type="email" id="modalRegisterEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalRegisterPassword">Password:</label>
+                        <input type="password" id="modalRegisterPassword" placeholder="Enter your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalConfirmPassword">Confirm Password:</label>
+                        <input type="password" id="modalConfirmPassword" placeholder="Confirm your password">
+                    </div>
+                    <button class="btn" onclick="modalRegister()">Register</button>
+                </div>
+            </div>
+            
+            <div id="authMessage"></div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "According to Takashi Yagisawa's extended modal realism, possible worlds are:",
+                options: [
+                    "Abstract constructs that don't really exist",
+                    "Concrete entities existing in a modal dimension",
+                    "Only linguistic fictions",
+                    "Mathematical abstractions"
+                ],
+                correct: 1,
+                explanation: "Yagisawa's extended modal realism posits that possible worlds are concrete entities existing in a modal dimension, not just abstract constructs."
+            },
+            {
+                question: "In the mathematical correspondence between prime numbers and possible worlds:",
+                options: [
+                    "Larger prime numbers correspond to larger possible worlds",
+                    "Smaller prime numbers correspond to larger possible worlds (inverse relationship)",
+                    "Prime numbers have no relationship to world size",
+                    "All prime numbers represent the same world size"
+                ],
+                correct: 1,
+                explanation: "The inverse relationship means smaller primes (like 2, 3, 5) correspond to larger possible worlds, while larger primes correspond to smaller worlds."
+            },
+            {
+                question: "Perdurantism is the view that:",
+                options: [
+                    "Objects exist only at single moments in time",
+                    "Objects are extended through time and have temporal parts",
+                    "Time is an illusion",
+                    "Objects exist outside of time entirely"
+                ],
+                correct: 1,
+                explanation: "Perdurantism holds that objects persist through time by having different temporal parts at different times, rather than being wholly present at each moment."
+            },
+            {
+                question: "In modal realism, the actual world is:",
+                options: [
+                    "The only world that exists",
+                    "Just one world among many equally real worlds",
+                    "A fiction created by language",
+                    "The most important possible world"
+                ],
+                correct: 1,
+                explanation: "Modal realism treats the actual world as just one among many equally real possible worlds, distinguished only by our perspective."
+            },
+            {
+                question: "Causality in possible worlds is best understood as:",
+                options: [
+                    "Only occurring in the actual world",
+                    "A relationship that can hold across different possible worlds",
+                    "An illusion created by human perception",
+                    "Only applicable to physical objects"
+                ],
+                correct: 1,
+                explanation: "Causality can be understood as holding across possible worlds, where causes in one world can have effects in other possible worlds."
+            },
+            {
+                question: "The modal dimension in extended modal realism is:",
+                options: [
+                    "A spatial dimension like length, width, or height",
+                    "A temporal dimension like past, present, or future",
+                    "A dimension analogous to space and time where possible worlds exist",
+                    "A mathematical abstraction with no real existence"
+                ],
+                correct: 2,
+                explanation: "The modal dimension is analogous to space and time, providing a framework where possible worlds exist as concrete entities."
+            },
+            {
+                question: "Composite numbers in the world-number correspondence represent:",
+                options: [
+                    "Impossible worlds that cannot exist",
+                    "Fundamental possible worlds",
+                    "Composite worlds that are combinations of fundamental worlds",
+                    "Mathematical errors in the system"
+                ],
+                correct: 2,
+                explanation: "Composite numbers represent composite worlds that are combinations or intersections of fundamental worlds (represented by prime numbers)."
+            },
+            {
+                question: "The principle of sufficient reason in modal contexts suggests:",
+                options: [
+                    "Every possible world must have a cause",
+                    "Every fact must have a sufficient reason in some possible world",
+                    "Only actual events need explanations",
+                    "Causality is impossible across possible worlds"
+                ],
+                correct: 1,
+                explanation: "The principle of sufficient reason, when applied modally, suggests that every fact must have a sufficient reason that holds in some possible world."
+            },
+            {
+                question: "Temporal parts in perdurantism are:",
+                options: [
+                    "Parts of objects that exist in space",
+                    "Parts of objects that exist at specific times",
+                    "Imaginary divisions of time",
+                    "Only applicable to living beings"
+                ],
+                correct: 1,
+                explanation: "Temporal parts are parts of objects that exist at specific times, allowing objects to persist through time by having different temporal parts at different moments."
+            },
+            {
+                question: "The accessibility relation in modal logic:",
+                options: [
+                    "Determines which worlds can be reached from the actual world",
+                    "Is only relevant to mathematical modal systems",
+                    "Doesn't apply to extended modal realism",
+                    "Refers to physical travel between worlds"
+                ],
+                correct: 0,
+                explanation: "The accessibility relation determines which possible worlds are accessible from a given world, forming the basis for modal logic and modal realism."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || {};
+
+        // Initialize quiz
+        function initQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            displayQuestion();
+            updateProgress();
+        }
+
+        function displayQuestion() {
+            const question = quizQuestions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="quiz-question">
+                    <h3>Question ${currentQuestion + 1} of ${quizQuestions.length}</h3>
+                    <p>${question.question}</p>
+                    <ul class="quiz-options">
+                        ${question.options.map((option, index) => `
+                            <li class="quiz-option ${userAnswers[currentQuestion] === index ? 'selected' : ''}" 
+                                onclick="selectAnswer(${index})">
+                                ${option}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            updateNavigation();
+        }
+
+        function selectAnswer(answerIndex) {
+            userAnswers[currentQuestion] = answerIndex;
+            displayQuestion(); // Refresh to show selection
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizQuestions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.style.display = currentQuestion > 0 ? 'block' : 'none';
+            
+            if (currentQuestion === quizQuestions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function submitQuiz() {
+            const score = calculateScore();
+            const percentage = Math.round((score / quizQuestions.length) * 100);
+            
+            // Save to history if logged in
+            const currentUser = getCurrentUser();
+            const isLoggedIn = getAuthStatus();
+            if (isLoggedIn && currentUser) {
+                const timestamp = new Date().toISOString();
+                if (!quizHistory[currentUser.email]) {
+                    quizHistory[currentUser.email] = [];
+                }
+                quizHistory[currentUser.email].push({
+                    score: score,
+                    total: quizQuestions.length,
+                    percentage: percentage,
+                    timestamp: timestamp,
+                    answers: [...userAnswers]
+                });
+                localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+            }
+            
+            displayResults(score, percentage);
+        }
+
+        function calculateScore() {
+            let score = 0;
+            for (let i = 0; i < quizQuestions.length; i++) {
+                if (userAnswers[i] === quizQuestions[i].correct) {
+                    score++;
+                }
+            }
+            return score;
+        }
+
+        function displayResults(score, percentage) {
+            const container = document.getElementById('quizContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            container.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            let grade = '';
+            let color = '';
+            if (percentage >= 90) {
+                grade = 'Excellent!';
+                color = '#28a745';
+            } else if (percentage >= 80) {
+                grade = 'Very Good!';
+                color = '#20c997';
+            } else if (percentage >= 70) {
+                grade = 'Good!';
+                color = '#ffc107';
+            } else if (percentage >= 60) {
+                grade = 'Satisfactory';
+                color = '#fd7e14';
+            } else {
+                grade = 'Needs Improvement';
+                color = '#dc3545';
+            }
+            
+            resultsContainer.innerHTML = `
+                <div class="quiz-results">
+                    <h3>Quiz Results</h3>
+                    <div class="score-display" style="color: ${color}">
+                        ${score}/${quizQuestions.length} (${percentage}%)
+                    </div>
+                    <h4 style="color: ${color}; text-align: center;">${grade}</h4>
+                    
+                    <h4>Question Review:</h4>
+                    ${quizQuestions.map((q, index) => {
+                        const userAnswer = userAnswers[index];
+                        const isCorrect = userAnswer === q.correct;
+                        return `
+                            <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid ${isCorrect ? '#28a745' : '#dc3545'};">
+                                <p><strong>Question ${index + 1}:</strong> ${q.question}</p>
+                                <p><strong>Your Answer:</strong> ${userAnswer !== null ? q.options[userAnswer] : 'Not answered'}</p>
+                                <p><strong>Correct Answer:</strong> ${q.options[q.correct]}</p>
+                                <p><strong>Explanation:</strong> ${q.explanation}</p>
+                            </div>
+                        `;
+                    }).join('')}
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn" onclick="retakeQuiz()">Retake Quiz</button>
+                        <button class="btn btn-secondary" onclick="goToDashboard()">View Dashboard</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function retakeQuiz() {
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'none';
+            initQuiz();
+        }
+
+        function goToDashboard() {
+            switchTab('dashboard');
+        }
+
+        // Authentication functions
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+
+        function updateUserInterface() {
+            const userInfo = document.getElementById('userInfo');
+            const loginPrompt = document.getElementById('loginPrompt');
+            const quizHistoryDiv = document.getElementById('quizHistory');
+            const historyList = document.getElementById('historyList');
+            
+            const currentUser = getCurrentUser();
+            const isLoggedIn = getAuthStatus();
+            
+            if (isLoggedIn && currentUser) {
+                if (userInfo) userInfo.style.display = 'block';
+                if (loginPrompt) loginPrompt.style.display = 'none';
+                if (quizHistoryDiv) quizHistoryDiv.style.display = 'block';
+                
+                const userName = document.getElementById('userName');
+                const userEmail = document.getElementById('userEmail');
+                if (userName) userName.textContent = currentUser.name;
+                if (userEmail) userEmail.textContent = currentUser.email;
+                
+                // Display quiz history
+                const userHistory = quizHistory[currentUser.email] || [];
+                if (historyList) {
+                    if (userHistory.length > 0) {
+                        historyList.innerHTML = userHistory.map((quiz, index) => `
+                            <div class="quiz-history-item">
+                                <div>
+                                    <strong>Quiz ${index + 1}</strong><br>
+                                    <small>${new Date(quiz.timestamp).toLocaleString()}</small>
+                                </div>
+                                <div>
+                                    <strong>${quiz.score}/${quiz.total} (${quiz.percentage}%)</strong>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        historyList.innerHTML = '<p>No quiz history yet. Take a quiz to see your results here!</p>';
+                    }
+                }
+            } else {
+                if (userInfo) userInfo.style.display = 'none';
+                if (loginPrompt) loginPrompt.style.display = 'block';
+                if (quizHistoryDiv) quizHistoryDiv.style.display = 'none';
+            }
+        }
+
+        function showMessage(message, type) {
+            const existingMessage = document.querySelector('.error, .success');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            
+            const authSection = document.querySelector('.auth-section');
+            authSection.insertBefore(messageDiv, authSection.firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Update dashboard if switching to it
+            if (tabName === 'dashboard') {
+                updateUserInterface();
+            }
+        }
+
+        function openProfile() {
+            window.open('profile.html', '_blank');
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            initQuiz();
+            updateUserInterface();
+        };
+    </script>
+</body>
+</html>

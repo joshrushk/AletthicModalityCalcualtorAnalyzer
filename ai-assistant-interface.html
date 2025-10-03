@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Modal Realism Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            max-height: calc(100vh - 200px);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.ai {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.ai .message-content {
+            background: white;
+            color: #2c3e50;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .suggestion {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            border: 1px solid #bbdefb;
+        }
+
+        .suggestion:hover {
+            background: #bbdefb;
+            transform: translateY(-2px);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #6c757d;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .concept-explanation {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .calculation-help {
+            background: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .steps-list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .steps-list li {
+            margin: 5px 0;
+            color: #495057;
+        }
+
+        .examples {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .examples h4 {
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .examples ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .examples li {
+            color: #856404;
+            margin: 3px 0;
+        }
+
+        .confidence-indicator {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .clear-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .clear-button:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: 100vh;
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+            }
+
+            .chat-messages {
+                max-height: calc(100vh - 150px);
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .suggestions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Assistant</h1>
+            <a href="index.html" class="nav-link">← Back to Calculator</a>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <div>Hello! I'm your AI assistant for the Modal Realism Calculator Suite. I can help you understand modal realism concepts, explain calculations, and provide guidance on using the calculators.</div>
+                        <div class="suggestions" id="initialSuggestions">
+                            <div class="suggestion" onclick="askQuestion('What is modal realism?')">What is modal realism?</div>
+                            <div class="suggestion" onclick="askQuestion('How do I calculate world size?')">How do I calculate world size?</div>
+                            <div class="suggestion" onclick="askQuestion('Explain possible worlds')">Explain possible worlds</div>
+                            <div class="suggestion" onclick="askQuestion('Help me with a calculation')">Help me with a calculation</div>
+                        </div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">AI</div>
+                <div>AI is thinking</div>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything about modal realism or calculations..." onkeypress="handleKeyPress(event)">
+                <button class="send-button" id="sendButton" onclick="sendMessage()">Send</button>
+                <button class="clear-button" onclick="clearChat()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="ai-assistant.js"></script>
+    <script>
+        // Initialize AI assistant
+        const ai = new ModalRealismAI();
+        let isTyping = false;
+
+        // Handle enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                // Get AI response
+                const response = await ai.processQuery(message, {
+                    currentPage: 'ai-assistant',
+                    timestamp: new Date().toISOString()
+                });
+
+                // Hide typing indicator
+                hideTypingIndicator();
+
+                // Add AI response to chat
+                addAIResponse(response);
+
+            } catch (error) {
+                console.error('Error getting AI response:', error);
+                hideTypingIndicator();
+                addMessage('Sorry, I encountered an error. Please try again.', 'ai');
+            }
+        }
+
+        // Add message to chat
+        function addMessage(content, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'user' ? 'U' : 'AI';
+
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content;
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = new Date().toLocaleTimeString();
+
+            messageContent.appendChild(timeDiv);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add AI response to chat
+        function addAIResponse(response) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = 'AI';
+
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+
+            let content = '';
+
+            switch (response.type) {
+                case 'concept':
+                    content = `
+                        <div class="concept-explanation">
+                            <h3>${response.concept.charAt(0).toUpperCase() + response.concept.slice(1)}</h3>
+                            <p><strong>Definition:</strong> ${response.definition}</p>
+                            <p><strong>Explanation:</strong> ${response.explanation}</p>
+                            ${response.examples ? `
+                                <div class="examples">
+                                    <h4>Examples:</h4>
+                                    <ul>
+                                        ${response.examples.map(ex => `<li>${ex}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    break;
+
+                case 'calculation_help':
+                    content = `
+                        <div class="calculation-help">
+                            <h3>${response.calculation.charAt(0).toUpperCase() + response.calculation.slice(1)}</h3>
+                            <p>${response.explanation}</p>
+                            <div class="steps-list">
+                                <h4>Steps:</h4>
+                                <ol>
+                                    ${response.steps.map(step => `<li>${step}</li>`).join('')}
+                                </ol>
+                            </div>
+                            ${response.example ? `<p><strong>Example:</strong> ${response.example}</p>` : ''}
+                        </div>
+                    `;
+                    break;
+
+                case 'calculation_explanation':
+                    content = `
+                        <div class="calculation-help">
+                            <h3>Calculation for World ${response.number}</h3>
+                            <p><strong>World Size:</strong> ${response.worldSize.toFixed(6)}</p>
+                            <p><strong>Probability:</strong> ${response.worldSize.toFixed(6)}</p>
+                            <p><strong>Type:</strong> ${response.isPrime ? 'Fundamental World' : 'Composite World'}</p>
+                            ${response.primeFactors.length > 0 ? `<p><strong>Prime Factors:</strong> [${response.primeFactors.join(', ')}]</p>` : ''}
+                            <div class="concept-explanation">
+                                <h4>Explanation:</h4>
+                                <p>${response.explanation.replace(/\n/g, '<br>')}</p>
+                            </div>
+                            <div class="concept-explanation">
+                                <h4>Philosophical Context:</h4>
+                                <p>${response.philosophicalContext}</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'faq':
+                    content = `
+                        <div class="concept-explanation">
+                            <h3>${response.question.charAt(0).toUpperCase() + response.question.slice(1)}</h3>
+                            <p>${response.answer}</p>
+                        </div>
+                    `;
+                    break;
+
+                default:
+                    content = response.message || 'I\'m not sure how to help with that.';
+            }
+
+            // Add suggestions if available
+            if (response.suggestions && response.suggestions.length > 0) {
+                content += `
+                    <div class="suggestions">
+                        ${response.suggestions.map(suggestion => 
+                            `<div class="suggestion" onclick="askQuestion('${suggestion}')">${suggestion}</div>`
+                        ).join('')}
+                    </div>
+                `;
+            }
+
+            // Add confidence indicator
+            if (response.confidence) {
+                content += `<div class="confidence-indicator">Confidence: ${Math.round(response.confidence * 100)}%</div>`;
+            }
+
+            messageContent.innerHTML = content;
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = new Date().toLocaleTimeString();
+
+            messageContent.appendChild(timeDiv);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            isTyping = true;
+            document.getElementById('typingIndicator').style.display = 'flex';
+            document.getElementById('sendButton').disabled = true;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            isTyping = false;
+            document.getElementById('typingIndicator').style.display = 'none';
+            document.getElementById('sendButton').disabled = false;
+        }
+
+        // Ask question function
+        function askQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        // Clear chat function
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                document.getElementById('chatMessages').innerHTML = `
+                    <div class="message ai">
+                        <div class="message-avatar">AI</div>
+                        <div class="message-content">
+                            <div>Chat history cleared. How can I help you today?</div>
+                            <div class="suggestions" id="initialSuggestions">
+                                <div class="suggestion" onclick="askQuestion('What is modal realism?')">What is modal realism?</div>
+                                <div class="suggestion" onclick="askQuestion('How do I calculate world size?')">How do I calculate world size?</div>
+                                <div class="suggestion" onclick="askQuestion('Explain possible worlds')">Explain possible worlds</div>
+                                <div class="suggestion" onclick="askQuestion('Help me with a calculation')">Help me with a calculation</div>
+                            </div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                `;
+                ai.clearHistory();
+            }
+        }
+
+        // Focus input on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('chatInput').focus();
+        });
+    </script>
+</body>
+</html>

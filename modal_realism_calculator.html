@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extended Modal Realism Calculator - Yagisawa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 120px;
+        }
+
+        .input-group input {
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            min-width: 200px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Advanced Features Styles */
+        .step-by-step {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #1976d2;
+            margin-right: 10px;
+        }
+
+        .visualization {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .world-box {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            min-width: 120px;
+        }
+
+        .world-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .world-properties {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .advanced-options {
+            background: #fff3e0;
+            border: 1px solid #ffcc02;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .option-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .option-group input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-right: 8px;
+        }
+
+        .calculation-history {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item .calculation {
+            font-family: monospace;
+            color: #495057;
+        }
+
+        .history-item .result {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
+        .export-btn.secondary {
+            background: #6c757d;
+        }
+
+        .export-btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+
+        .operation-section {
+            background: #e8f4f8;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .operation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .operation-group {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .operation-group h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .operation-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .operation-inputs input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 80px;
+        }
+
+        .operation-symbol {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .result-value {
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+        }
+
+        .prime-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .prime {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .composite {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .world-visualization {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .world-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .world-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .operation-result {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .operation-steps {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .philosophy-note {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #e17055;
+        }
+
+        .philosophy-note h4 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+
+        .philosophy-note p {
+            color: #636e72;
+            line-height: 1.6;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .nav-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .auth-header {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            color: white;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .auth-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .auth-tab-content {
+            display: none;
+        }
+
+        .auth-tab-content.active {
+            display: block;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .input-group input {
+                min-width: auto;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .operation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .operation-inputs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .operation-inputs input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="auth-header" id="authHeader">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span>Welcome, <span id="userName"></span>!</span>
+                </div>
+                <button class="auth-btn" id="loginBtn" onclick="showAuthModal()">Login</button>
+                <button class="auth-btn" id="registerBtn" onclick="showAuthModal('register')">Register</button>
+                <button class="auth-btn" id="profileBtn" onclick="openProfile()" style="display: none;">Profile</button>
+                <button class="auth-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+            </div>
+            
+            <a href="index.html" class="nav-link">← Back to Main</a>
+            
+            <h1>Extended Modal Realism Calculator</h1>
+            <p>Takashi Yagisawa's Mathematical Correspondence Between Prime Numbers and Possible Worlds</p>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('analysis')">World Analysis</button>
+                <button class="tab" onclick="switchTab('operations')">World Operations</button>
+                <button class="tab" onclick="switchTab('range')">Range Analysis</button>
+            </div>
+
+            <!-- World Analysis Tab -->
+            <div id="analysis" class="tab-content active">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="numberInput">Enter Number:</label>
+                        <input type="number" id="numberInput" placeholder="Enter a positive integer" min="2" value="12">
+                        <button class="btn" onclick="calculateWorld()">Calculate World</button>
+                    </div>
+                    
+                    <!-- Advanced Options -->
+                    <div class="advanced-options">
+                        <h4>Advanced Options</h4>
+                        <div class="option-group">
+                            <input type="checkbox" id="showSteps" checked>
+                            <label for="showSteps">Show step-by-step calculation</label>
+                        </div>
+                        <div class="option-group">
+                            <input type="checkbox" id="showVisualization" checked>
+                            <label for="showVisualization">Show world visualization</label>
+                        </div>
+                        <div class="option-group">
+                            <input type="checkbox" id="saveToHistory" checked>
+                            <label for="saveToHistory">Save to calculation history</label>
+                        </div>
+                        <div class="option-group">
+                            <input type="checkbox" id="showPhilosophy">
+                            <label for="showPhilosophy">Include philosophical context</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- World Operations Tab -->
+            <div id="operations" class="tab-content">
+                <div class="operation-section">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">World Operations</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px;">Perform mathematical operations between possible worlds and see how they combine in the modal dimension.</p>
+                    
+                    <div class="operation-grid">
+                        <div class="operation-group">
+                            <h4>Addition (World Union)</h4>
+                            <div class="operation-inputs">
+                                <input type="number" id="addA" placeholder="A" min="2" value="3">
+                                <span class="operation-symbol">+</span>
+                                <input type="number" id="addB" placeholder="B" min="2" value="5">
+                                <button class="btn btn-success" onclick="performOperation('add')">Add Worlds</button>
+                            </div>
+                        </div>
+
+                        <div class="operation-group">
+                            <h4>Subtraction (World Difference)</h4>
+                            <div class="operation-inputs">
+                                <input type="number" id="subA" placeholder="A" min="2" value="12">
+                                <span class="operation-symbol">-</span>
+                                <input type="number" id="subB" placeholder="B" min="2" value="3">
+                                <button class="btn btn-warning" onclick="performOperation('sub')">Subtract Worlds</button>
+                            </div>
+                        </div>
+
+                        <div class="operation-group">
+                            <h4>Multiplication (World Intersection)</h4>
+                            <div class="operation-inputs">
+                                <input type="number" id="mulA" placeholder="A" min="2" value="4">
+                                <span class="operation-symbol">×</span>
+                                <input type="number" id="mulB" placeholder="B" min="2" value="6">
+                                <button class="btn btn-secondary" onclick="performOperation('mul')">Multiply Worlds</button>
+                            </div>
+                        </div>
+
+                        <div class="operation-group">
+                            <h4>Division (World Quotient)</h4>
+                            <div class="operation-inputs">
+                                <input type="number" id="divA" placeholder="A" min="2" value="12">
+                                <span class="operation-symbol">÷</span>
+                                <input type="number" id="divB" placeholder="B" min="2" value="3">
+                                <button class="btn btn-danger" onclick="performOperation('div')">Divide Worlds</button>
+                            </div>
+                        </div>
+
+                        <div class="operation-group">
+                            <h4>Exponentiation (World Power)</h4>
+                            <div class="operation-inputs">
+                                <input type="number" id="expA" placeholder="Base" min="2" value="2">
+                                <span class="operation-symbol">^</span>
+                                <input type="number" id="expB" placeholder="Exponent" min="1" value="3">
+                                <button class="btn" onclick="performOperation('exp')">Exponentiate</button>
+                            </div>
+                        </div>
+
+                        <div class="operation-group">
+                            <h4>Root (World Root)</h4>
+                            <div class="operation-inputs">
+                                <input type="number" id="rootA" placeholder="Number" min="2" value="8">
+                                <span class="operation-symbol">√</span>
+                                <input type="number" id="rootB" placeholder="Root" min="2" value="3">
+                                <button class="btn" onclick="performOperation('root')">Find Root</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Range Analysis Tab -->
+            <div id="range" class="tab-content">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="rangeInput">Range Analysis:</label>
+                        <input type="number" id="rangeInput" placeholder="Max number for range" min="2" value="20">
+                        <button class="btn" onclick="analyzeRange()">Analyze Range</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results"></div>
+
+            <!-- Step-by-Step Calculation -->
+            <div id="stepByStep" class="step-by-step">
+                <h4>Step-by-Step Calculation</h4>
+                <div id="stepsContent"></div>
+            </div>
+
+            <!-- World Visualization -->
+            <div id="visualization" class="visualization">
+                <h4>World Visualization</h4>
+                <div id="worldsContainer"></div>
+            </div>
+
+            <!-- Calculation History -->
+            <div class="calculation-history">
+                <h4>Recent Calculations</h4>
+                <div id="calculationHistory"></div>
+                <div class="export-options">
+                    <button class="export-btn" onclick="exportHistory()">Export History</button>
+                    <button class="export-btn secondary" onclick="clearHistory()">Clear History</button>
+                </div>
+            </div>
+
+            <div class="philosophy-note">
+                <h4>Philosophical Foundation</h4>
+                <p>
+                    In Takashi Yagisawa's extended modal realism, possible worlds exist as concrete entities in a modal dimension. 
+                    This calculator implements the mathematical correspondence where prime numbers represent fundamental possible worlds, 
+                    with larger worlds corresponding to smaller primes (inverse relationship). Composite numbers represent composite worlds 
+                    that are combinations of fundamental worlds. The probability of a world corresponds to 1/n, where n is the associated number.
+                    <br><br>
+                    <strong>World Operations:</strong> Mathematical operations between worlds represent different ways of combining or transforming 
+                    possible worlds in the modal dimension. Addition creates world unions, multiplication finds intersections, 
+                    and exponentiation represents repeated world combinations.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <h2>Authentication</h2>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+            </div>
+            
+            <div id="loginTab" class="auth-tab-content active">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="modalLoginEmail">Email:</label>
+                        <input type="email" id="modalLoginEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalLoginPassword">Password:</label>
+                        <input type="password" id="modalLoginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn" onclick="modalLogin()">Login</button>
+                </div>
+            </div>
+            
+            <div id="registerTab" class="auth-tab-content">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="modalRegisterName">Full Name:</label>
+                        <input type="text" id="modalRegisterName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalRegisterEmail">Email:</label>
+                        <input type="email" id="modalRegisterEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalRegisterPassword">Password:</label>
+                        <input type="password" id="modalRegisterPassword" placeholder="Enter your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalConfirmPassword">Confirm Password:</label>
+                        <input type="password" id="modalConfirmPassword" placeholder="Confirm your password">
+                    </div>
+                    <button class="btn" onclick="modalRegister()">Register</button>
+                </div>
+            </div>
+            
+            <div id="authMessage"></div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Prime number utilities
+        function isPrime(n) {
+            if (n < 2) return false;
+            if (n === 2) return true;
+            if (n % 2 === 0) return false;
+            for (let i = 3; i <= Math.sqrt(n); i += 2) {
+                if (n % i === 0) return false;
+            }
+            return true;
+        }
+
+        function getPrimeFactors(n) {
+            const factors = [];
+            let d = 2;
+            while (d * d <= n) {
+                while (n % d === 0) {
+                    factors.push(d);
+                    n /= d;
+                }
+                d++;
+            }
+            if (n > 1) factors.push(n);
+            return factors;
+        }
+
+        function generatePrimesUpTo(max) {
+            const primes = [];
+            for (let i = 2; i <= max; i++) {
+                if (isPrime(i)) primes.push(i);
+            }
+            return primes;
+        }
+
+        function calculateWorldProperties(n) {
+            const isPrimeNumber = isPrime(n);
+            const worldSize = 1 / n;
+            const worldProbability = worldSize;
+            const primeFactors = getPrimeFactors(n);
+            const fundamentalWorlds = isPrimeNumber ? [n] : [...new Set(primeFactors)];
+            
+            return {
+                number: n,
+                isPrime: isPrimeNumber,
+                worldSize: worldSize,
+                worldProbability: worldProbability,
+                primeFactors: primeFactors,
+                fundamentalWorlds: fundamentalWorlds,
+                complexity: primeFactors.length,
+                modalSignificance: isPrimeNumber ? 'Fundamental' : 'Composite'
+            };
+        }
+
+        function performOperation(operation) {
+            let a, b, result, operationSymbol, operationName;
+            
+            switch(operation) {
+                case 'add':
+                    a = parseInt(document.getElementById('addA').value);
+                    b = parseInt(document.getElementById('addB').value);
+                    result = a + b;
+                    operationSymbol = '+';
+                    operationName = 'Addition (World Union)';
+                    break;
+                case 'sub':
+                    a = parseInt(document.getElementById('subA').value);
+                    b = parseInt(document.getElementById('subB').value);
+                    result = a - b;
+                    operationSymbol = '-';
+                    operationName = 'Subtraction (World Difference)';
+                    break;
+                case 'mul':
+                    a = parseInt(document.getElementById('mulA').value);
+                    b = parseInt(document.getElementById('mulB').value);
+                    result = a * b;
+                    operationSymbol = '×';
+                    operationName = 'Multiplication (World Intersection)';
+                    break;
+                case 'div':
+                    a = parseInt(document.getElementById('divA').value);
+                    b = parseInt(document.getElementById('divB').value);
+                    if (b === 0) {
+                        showError('Cannot divide by zero.');
+                        return;
+                    }
+                    result = a / b;
+                    operationSymbol = '÷';
+                    operationName = 'Division (World Quotient)';
+                    break;
+                case 'exp':
+                    a = parseInt(document.getElementById('expA').value);
+                    b = parseInt(document.getElementById('expB').value);
+                    result = Math.pow(a, b);
+                    operationSymbol = '^';
+                    operationName = 'Exponentiation (World Power)';
+                    break;
+                case 'root':
+                    a = parseInt(document.getElementById('rootA').value);
+                    b = parseInt(document.getElementById('rootB').value);
+                    if (b === 0) {
+                        showError('Cannot take 0th root.');
+                        return;
+                    }
+                    result = Math.pow(a, 1/b);
+                    operationSymbol = '√';
+                    operationName = 'Root (World Root)';
+                    break;
+            }
+
+            if (isNaN(a) || isNaN(b) || a < 2 || b < 2) {
+                showError('Please enter valid positive integers greater than 1.');
+                return;
+            }
+
+            if (result < 2) {
+                showError('Result must be a positive integer greater than 1 for world analysis.');
+                return;
+            }
+
+            const worldA = calculateWorldProperties(a);
+            const worldB = calculateWorldProperties(b);
+            const resultWorld = calculateWorldProperties(Math.floor(result));
+
+            displayOperationResults(operationName, operationSymbol, a, b, result, worldA, worldB, resultWorld);
+        }
+
+        function displayOperationResults(operationName, symbol, a, b, result, worldA, worldB, resultWorld) {
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = `
+                <div class="operation-result">
+                    <h3>${operationName} Result</h3>
+                    <div class="operation-steps">
+                        <div><strong>Operation:</strong> ${a} ${symbol} ${b} = ${result}</div>
+                        <div><strong>World A (${a}):</strong> Size ${worldA.worldSize.toFixed(6)} (${worldA.isPrime ? 'Prime' : 'Composite'})</div>
+                        <div><strong>World B (${b}):</strong> Size ${worldB.worldSize.toFixed(6)} (${worldB.isPrime ? 'Prime' : 'Composite'})</div>
+                        <div><strong>Result World (${Math.floor(result)}):</strong> Size ${resultWorld.worldSize.toFixed(6)} (${resultWorld.isPrime ? 'Prime' : 'Composite'})</div>
+                    </div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>World A Properties (${a})</h3>
+                        <div class="result-item">
+                            <span class="result-label">Type:</span>
+                            <span class="result-value">
+                                ${worldA.isPrime ? 'Prime' : 'Composite'}
+                                <span class="prime-indicator ${worldA.isPrime ? 'prime' : 'composite'}">
+                                    ${worldA.isPrime ? 'FUNDAMENTAL' : 'COMPOSITE'}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">World Size:</span>
+                            <span class="result-value">${worldA.worldSize.toFixed(6)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Probability:</span>
+                            <span class="result-value">${(worldA.worldProbability * 100).toFixed(4)}%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Prime Factors:</span>
+                            <span class="result-value">${worldA.primeFactors.join(' × ')}</span>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>World B Properties (${b})</h3>
+                        <div class="result-item">
+                            <span class="result-label">Type:</span>
+                            <span class="result-value">
+                                ${worldB.isPrime ? 'Prime' : 'Composite'}
+                                <span class="prime-indicator ${worldB.isPrime ? 'prime' : 'composite'}">
+                                    ${worldB.isPrime ? 'FUNDAMENTAL' : 'COMPOSITE'}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">World Size:</span>
+                            <span class="result-value">${worldB.worldSize.toFixed(6)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Probability:</span>
+                            <span class="result-value">${(worldB.worldProbability * 100).toFixed(4)}%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Prime Factors:</span>
+                            <span class="result-value">${worldB.primeFactors.join(' × ')}</span>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Result World Properties (${Math.floor(result)})</h3>
+                        <div class="result-item">
+                            <span class="result-label">Type:</span>
+                            <span class="result-value">
+                                ${resultWorld.isPrime ? 'Prime' : 'Composite'}
+                                <span class="prime-indicator ${resultWorld.isPrime ? 'prime' : 'composite'}">
+                                    ${resultWorld.isPrime ? 'FUNDAMENTAL' : 'COMPOSITE'}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">World Size:</span>
+                            <span class="result-value">${resultWorld.worldSize.toFixed(6)}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Probability:</span>
+                            <span class="result-value">${(resultWorld.worldProbability * 100).toFixed(4)}%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Prime Factors:</span>
+                            <span class="result-value">${resultWorld.primeFactors.join(' × ')}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Modal Significance:</span>
+                            <span class="result-value">${resultWorld.modalSignificance}</span>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Operation Visualization</h3>
+                        <div class="world-visualization">
+                            <p><strong>World Size Comparison:</strong></p>
+                            <div style="margin: 10px 0;">
+                                <span style="display: inline-block; width: 30px;">A:</span>
+                                <div class="world-bar" style="width: ${Math.min(worldA.worldSize * 1000, 100)}%; height: 15px;"></div>
+                                <span style="font-size: 0.8em; color: #666;">${worldA.worldSize.toFixed(4)}</span>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <span style="display: inline-block; width: 30px;">B:</span>
+                                <div class="world-bar" style="width: ${Math.min(worldB.worldSize * 1000, 100)}%; height: 15px;"></div>
+                                <span style="font-size: 0.8em; color: #666;">${worldB.worldSize.toFixed(4)}</span>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <span style="display: inline-block; width: 30px;">R:</span>
+                                <div class="world-bar" style="width: ${Math.min(resultWorld.worldSize * 1000, 100)}%; height: 15px; background: linear-gradient(90deg, #28a745, #20c997);"></div>
+                                <span style="font-size: 0.8em; color: #666;">${resultWorld.worldSize.toFixed(4)}</span>
+                            </div>
+                            <p><small>A = World A, B = World B, R = Result World</small></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Global calculation history
+        let calculationHistory = JSON.parse(localStorage.getItem('modalRealismHistory') || '[]');
+
+        function calculateWorld() {
+            const input = document.getElementById('numberInput');
+            const number = parseInt(input.value);
+            
+            if (isNaN(number) || number < 2) {
+                showError('Please enter a valid positive integer greater than 1.');
+                return;
+            }
+
+            const properties = calculateWorldProperties(number);
+            displayResults([properties]);
+            
+            // Show step-by-step if enabled
+            if (document.getElementById('showSteps').checked) {
+                showStepByStep(properties);
+            }
+            
+            // Show visualization if enabled
+            if (document.getElementById('showVisualization').checked) {
+                showVisualization(properties);
+            }
+            
+            // Save to history if enabled
+            if (document.getElementById('saveToHistory').checked) {
+                saveToHistory(properties);
+            }
+        }
+
+        function showStepByStep(properties) {
+            const stepByStepDiv = document.getElementById('stepByStep');
+            const stepsContent = document.getElementById('stepsContent');
+            
+            const steps = [
+                `Step 1: Input number ${properties.number}`,
+                `Step 2: Check if prime - ${properties.isPrime ? 'Yes' : 'No'}`,
+                `Step 3: Calculate world size = 1/${properties.number} = ${properties.worldSize.toFixed(6)}`,
+                `Step 4: Calculate probability = ${properties.worldProbability.toFixed(6)}`,
+                `Step 5: Find prime factors: [${properties.primeFactors.join(', ')}]`,
+                `Step 6: Determine complexity: ${properties.complexity} fundamental worlds`,
+                `Step 7: Modal significance: ${properties.modalSignificance}`
+            ];
+            
+            if (properties.isPrime) {
+                steps.push(`Step 8: This is a fundamental possible world in modal space`);
+            } else {
+                steps.push(`Step 8: This is a composite world formed from ${properties.fundamentalWorlds.length} fundamental worlds`);
+            }
+            
+            stepsContent.innerHTML = steps.map((step, index) => 
+                `<div class="step"><span class="step-number">${index + 1}.</span>${step}</div>`
+            ).join('');
+            
+            stepByStepDiv.style.display = 'block';
+        }
+
+        function showVisualization(properties) {
+            const visualizationDiv = document.getElementById('visualization');
+            const worldsContainer = document.getElementById('worldsContainer');
+            
+            let html = '';
+            
+            if (properties.isPrime) {
+                html = `
+                    <div class="world-box">
+                        <div class="world-number">World ${properties.number}</div>
+                        <div class="world-properties">
+                            Size: ${properties.worldSize.toFixed(4)}<br>
+                            Probability: ${properties.worldProbability.toFixed(4)}<br>
+                            Type: Fundamental
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Show fundamental worlds
+                properties.fundamentalWorlds.forEach(worldNum => {
+                    const worldSize = 1 / worldNum;
+                    html += `
+                        <div class="world-box">
+                            <div class="world-number">World ${worldNum}</div>
+                            <div class="world-properties">
+                                Size: ${worldSize.toFixed(4)}<br>
+                                Type: Fundamental
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Show composite world
+                html += `
+                    <div class="world-box" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">
+                        <div class="world-number">World ${properties.number}</div>
+                        <div class="world-properties">
+                            Size: ${properties.worldSize.toFixed(4)}<br>
+                            Type: Composite<br>
+                            Components: ${properties.fundamentalWorlds.length}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            worldsContainer.innerHTML = html;
+            visualizationDiv.style.display = 'block';
+        }
+
+        function saveToHistory(properties) {
+            const historyItem = {
+                id: Date.now(),
+                number: properties.number,
+                properties: properties,
+                timestamp: new Date().toISOString()
+            };
+            
+            calculationHistory.unshift(historyItem);
+            
+            // Keep only last 20 calculations
+            if (calculationHistory.length > 20) {
+                calculationHistory = calculationHistory.slice(0, 20);
+            }
+            
+            localStorage.setItem('modalRealismHistory', JSON.stringify(calculationHistory));
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyDiv = document.getElementById('calculationHistory');
+            
+            if (calculationHistory.length === 0) {
+                historyDiv.innerHTML = '<p>No calculations yet. Start calculating to see your history here!</p>';
+                return;
+            }
+            
+            const html = calculationHistory.map(item => `
+                <div class="history-item">
+                    <div class="calculation">
+                        World ${item.number} → Size: ${item.properties.worldSize.toFixed(4)}
+                    </div>
+                    <div class="result">
+                        ${item.properties.isPrime ? 'Prime' : 'Composite'}
+                    </div>
+                </div>
+            `).join('');
+            
+            historyDiv.innerHTML = html;
+        }
+
+        function exportHistory() {
+            if (calculationHistory.length === 0) {
+                alert('No calculations to export');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(calculationHistory, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'modal_realism_calculations.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all calculation history?')) {
+                calculationHistory = [];
+                localStorage.removeItem('modalRealismHistory');
+                updateHistoryDisplay();
+            }
+        }
+
+        // Initialize history display on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHistoryDisplay();
+        });
+
+        function analyzeRange() {
+            const input = document.getElementById('rangeInput');
+            const maxNumber = parseInt(input.value);
+            
+            if (isNaN(maxNumber) || maxNumber < 2) {
+                showError('Please enter a valid positive integer greater than 1.');
+                return;
+            }
+
+            const results = [];
+            for (let i = 2; i <= maxNumber; i++) {
+                results.push(calculateWorldProperties(i));
+            }
+
+            displayResults(results);
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (results.length === 1) {
+                // Single number analysis
+                const props = results[0];
+                resultsDiv.innerHTML = `
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <h3>World Properties</h3>
+                            <div class="result-item">
+                                <span class="result-label">Number:</span>
+                                <span class="result-value">${props.number}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Type:</span>
+                                <span class="result-value">
+                                    ${props.isPrime ? 'Prime' : 'Composite'}
+                                    <span class="prime-indicator ${props.isPrime ? 'prime' : 'composite'}">
+                                        ${props.isPrime ? 'FUNDAMENTAL' : 'COMPOSITE'}
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">World Size:</span>
+                                <span class="result-value">${props.worldSize.toFixed(6)}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Probability:</span>
+                                <span class="result-value">${(props.worldProbability * 100).toFixed(4)}%</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Modal Significance:</span>
+                                <span class="result-value">${props.modalSignificance}</span>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Mathematical Analysis</h3>
+                            <div class="result-item">
+                                <span class="result-label">Prime Factors:</span>
+                                <span class="result-value">${props.primeFactors.join(' × ')}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Fundamental Worlds:</span>
+                                <span class="result-value">${props.fundamentalWorlds.join(', ')}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Complexity:</span>
+                                <span class="result-value">${props.complexity} factor(s)</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Inverse Size:</span>
+                                <span class="result-value">1/${props.number} = ${props.worldSize.toFixed(6)}</span>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>World Visualization</h3>
+                            <div class="world-visualization">
+                                <p><strong>World Size Representation:</strong></p>
+                                <div class="world-bar" style="width: ${Math.min(props.worldSize * 1000, 100)}%"></div>
+                                <p><small>Bar length proportional to world size (1/${props.number})</small></p>
+                                <p><strong>Modal Dimension:</strong> ${props.isPrime ? 'Fundamental possible world' : 'Composite of ' + props.fundamentalWorlds.length + ' fundamental worlds'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Range analysis
+                const primeWorlds = results.filter(r => r.isPrime);
+                const compositeWorlds = results.filter(r => !r.isPrime);
+                
+                resultsDiv.innerHTML = `
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <h3>Range Summary</h3>
+                            <div class="result-item">
+                                <span class="result-label">Total Numbers:</span>
+                                <span class="result-value">${results.length}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Prime Worlds:</span>
+                                <span class="result-value">${primeWorlds.length}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Composite Worlds:</span>
+                                <span class="result-value">${compositeWorlds.length}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Largest Prime:</span>
+                                <span class="result-value">${primeWorlds.length > 0 ? Math.max(...primeWorlds.map(p => p.number)) : 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Prime Worlds (Fundamental)</h3>
+                            ${primeWorlds.map(world => `
+                                <div class="result-item">
+                                    <span class="result-label">${world.number}:</span>
+                                    <span class="result-value">Size ${world.worldSize.toFixed(6)} (${(world.worldProbability * 100).toFixed(2)}%)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Composite Worlds</h3>
+                            ${compositeWorlds.slice(0, 10).map(world => `
+                                <div class="result-item">
+                                    <span class="result-label">${world.number}:</span>
+                                    <span class="result-value">Size ${world.worldSize.toFixed(6)} (${world.primeFactors.join('×')})</span>
+                                </div>
+                            `).join('')}
+                            ${compositeWorlds.length > 10 ? `<p><small>... and ${compositeWorlds.length - 10} more composite worlds</small></p>` : ''}
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Modal Distribution</h3>
+                            <div class="world-visualization">
+                                <p><strong>World Size Distribution:</strong></p>
+                                ${results.slice(0, 15).map(world => `
+                                    <div style="margin: 5px 0;">
+                                        <span style="display: inline-block; width: 30px;">${world.number}:</span>
+                                        <div class="world-bar" style="width: ${Math.min(world.worldSize * 2000, 100)}%; height: 10px;"></div>
+                                        <span style="font-size: 0.8em; color: #666;">${world.worldSize.toFixed(4)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function showError(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        function openProfile() {
+            window.open('profile.html', '_blank');
+        }
+
+        // Initialize with default calculation
+        window.onload = function() {
+            calculateWorld();
+        };
+    </script>
+</body>
+</html>

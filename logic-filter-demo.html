@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Classical Logic Filter Demo - Modal Realism Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .nav-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .demo-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .input-group textarea {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .result-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .original-text {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .processed-text {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .analysis-details {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            margin-bottom: 15px;
+        }
+
+        .analysis-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #d1ecf1;
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .analysis-value {
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+        }
+
+        .logic-formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .example-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-left: 4px solid #667eea;
+        }
+
+        .example-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .example-original {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .example-processed {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .example-category {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .philosophy-note {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #e17055;
+        }
+
+        .philosophy-note h4 {
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+
+        .philosophy-note p {
+            color: #636e72;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .philosophy-note ul {
+            color: #636e72;
+            margin-left: 20px;
+        }
+
+        .philosophy-note li {
+            margin-bottom: 5px;
+        }
+
+        .logic-indicator {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
+        .modal-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .existential {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .universal {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .temporal {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .fallacy-detection {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .suggestion-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .complexity-meter {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .complexity-bar {
+            flex: 1;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin: 0 10px;
+            overflow: hidden;
+        }
+
+        .complexity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .progress-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .advanced-controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 120px;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .control-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="nav-link">← Back to Main</a>
+            
+            <h1>Advanced Classical Logic Filter Demo</h1>
+            <p>Comprehensive analysis and transformation of natural language to classical logic compliance</p>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('interactive')">Interactive Demo</button>
+                <button class="tab" onclick="switchTab('examples')">Example Library</button>
+                <button class="tab" onclick="switchTab('analysis')">Deep Analysis</button>
+                <button class="tab" onclick="switchTab('education')">Logic Education</button>
+                <button class="tab" onclick="switchTab('settings')">Advanced Settings</button>
+            </div>
+
+            <!-- Interactive Demo Tab -->
+            <div id="interactive" class="tab-content active">
+                <div class="demo-section">
+                    <h3>Interactive Logic Processing</h3>
+                    <p style="margin-bottom: 20px; color: #6c757d;">
+                        Enter any message below to see comprehensive classical logic analysis and transformation. 
+                        The system will detect logical structures, identify fallacies, and restructure content for maximum clarity.
+                    </p>
+                    
+                    <div class="advanced-controls">
+                        <h4>Processing Options</h4>
+                        <div class="control-group">
+                            <label>Analysis Level:</label>
+                            <select id="analysisLevel">
+                                <option value="basic">Basic</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Show Original:</label>
+                            <input type="checkbox" id="showOriginal" checked>
+                        </div>
+                        <div class="control-group">
+                            <label>Generate Formula:</label>
+                            <input type="checkbox" id="generateFormula" checked>
+                        </div>
+                        <div class="control-group">
+                            <label>Detect Fallacies:</label>
+                            <input type="checkbox" id="detectFallacies" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Enter a complex message for analysis... (e.g., 'My name is Andy and tomorrow I'm not sure I will eat candy')"
+                            rows="4"
+                        >My name is Andy and tomorrow I'm not sure I will eat candy</textarea>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn" onclick="processMessage()">Process Message</button>
+                            <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                            <button class="btn btn-warning" onclick="loadRandomExample()">Random Example</button>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-indicator" id="progressIndicator">
+                        <div class="spinner"></div>
+                        <p>Processing message through classical logic filter...</p>
+                    </div>
+                    
+                    <div id="results" class="results-container"></div>
+                </div>
+            </div>
+
+            <!-- Example Library Tab -->
+            <div id="examples" class="tab-content">
+                <div class="demo-section">
+                    <h3>Comprehensive Example Library</h3>
+                    <p style="margin-bottom: 20px; color: #6c757d;">
+                        Explore categorized examples of logical transformations. Click any example to see detailed analysis.
+                    </p>
+                    
+                    <div class="examples-grid">
+                        <!-- Vague Language Examples -->
+                        <div class="example-card" onclick="loadExample('My name is Andy and tomorrow I\'m not sure I will eat candy')">
+                            <div class="example-category">Alethic Modality</div>
+                            <div class="example-original">"My name is Andy and tomorrow I'm not sure I will eat candy"</div>
+                            <div class="example-processed">"My name is Andy and tomorrow I am uncertain whether I will eat candy (in the future) (contingently)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('I think maybe something might happen tomorrow if we do stuff')">
+                            <div class="example-category">Vague Language</div>
+                            <div class="example-original">"I think maybe something might happen tomorrow if we do stuff"</div>
+                            <div class="example-processed">"I think possibly a specific event might happen tomorrow if we perform specific actions (in the future) (possibly)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('There is something somewhere that does stuff sometimes')">
+                            <div class="example-category">Vague Language</div>
+                            <div class="example-original">"There is something somewhere that does stuff sometimes"</div>
+                            <div class="example-processed">"There exists a specific entity in a particular location that performs specific actions on certain occasions (currently)"</div>
+                        </div>
+                        
+                        <!-- Fallacy Correction Examples -->
+                        <div class="example-card" onclick="loadExample('You are wrong about everything and clearly don\'t understand anything')">
+                            <div class="example-category">Ad Hominem</div>
+                            <div class="example-original">"You are wrong about everything and clearly don't understand anything"</div>
+                            <div class="example-processed">"The argument appears to contain errors and may lack sufficient understanding (currently)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('Either you agree with me or you are stupid')">
+                            <div class="example-category">False Dilemma</div>
+                            <div class="example-original">"Either you agree with me or you are stupid"</div>
+                            <div class="example-processed">"You may either agree with my position or you may have a different perspective (currently)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('Obviously this is true because it makes sense')">
+                            <div class="example-category">Begging the Question</div>
+                            <div class="example-original">"Obviously this is true because it makes sense"</div>
+                            <div class="example-processed">"This statement appears to be true based on logical reasoning (currently)"</div>
+                        </div>
+                        
+                        <!-- Temporal Examples -->
+                        <div class="example-card" onclick="loadExample('Yesterday I was doing something somewhere but now I\'m not')">
+                            <div class="example-category">Temporal Indexing</div>
+                            <div class="example-original">"Yesterday I was doing something somewhere but now I'm not"</div>
+                            <div class="example-processed">"Yesterday I was performing a specific activity in a particular location but currently I am not (in the past) (currently)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('Tomorrow we will definitely do something important')">
+                            <div class="example-category">Future Modality</div>
+                            <div class="example-original">"Tomorrow we will definitely do something important"</div>
+                            <div class="example-processed">"Tomorrow we will necessarily perform a specific important action (in the future) (necessarily)"</div>
+                        </div>
+                        
+                        <!-- Quantifier Examples -->
+                        <div class="example-card" onclick="loadExample('All people always do the same thing every time')">
+                            <div class="example-category">Quantifier Overreach</div>
+                            <div class="example-original">"All people always do the same thing every time"</div>
+                            <div class="example-processed">"Most people frequently perform similar actions in comparable situations (necessarily)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('Some people sometimes do things that might be good')">
+                            <div class="example-category">Existential Quantification</div>
+                            <div class="example-original">"Some people sometimes do things that might be good"</div>
+                            <div class="example-processed">"There exist people who occasionally perform actions that may be beneficial (possibly)"</div>
+                        </div>
+                        
+                        <!-- Complex Logical Examples -->
+                        <div class="example-card" onclick="loadExample('If it rains tomorrow, then we might do something inside, but if it doesn\'t, we will definitely go somewhere outside')">
+                            <div class="example-category">Complex Conditional</div>
+                            <div class="example-original">"If it rains tomorrow, then we might do something inside, but if it doesn't, we will definitely go somewhere outside"</div>
+                            <div class="example-processed">"If it rains tomorrow, then we may perform a specific indoor activity, but if it does not rain, we will necessarily go to a specific outdoor location (in the future) (possibly) (necessarily)"</div>
+                        </div>
+                        
+                        <div class="example-card" onclick="loadExample('Everyone knows that all possible worlds exist necessarily, but some people think this is obviously wrong')">
+                            <div class="example-category">Modal Realism</div>
+                            <div class="example-original">"Everyone knows that all possible worlds exist necessarily, but some people think this is obviously wrong"</div>
+                            <div class="example-processed">"Most people understand that all possible worlds exist necessarily, but some people believe this position contains errors (necessarily) (currently)"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Analysis Tab -->
+            <div id="analysis" class="tab-content">
+                <div class="demo-section">
+                    <h3>Deep Logical Analysis</h3>
+                    <p style="margin-bottom: 20px; color: #6c757d;">
+                        Advanced analysis tools for understanding the logical structure and philosophical implications of processed messages.
+                    </p>
+                    
+                    <div id="analysisResults" class="results-container">
+                        <div class="result-card">
+                            <h4>Analysis Tools</h4>
+                            <p>Process a message in the Interactive Demo tab to see detailed analysis here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logic Education Tab -->
+            <div id="education" class="tab-content">
+                <div class="demo-section">
+                    <h3>Classical Logic Education</h3>
+                    <p style="margin-bottom: 20px; color: #6c757d;">
+                        Learn about classical logic principles, modal operators, and logical fallacies.
+                    </p>
+                    
+                    <div class="philosophy-note">
+                        <h4>Classical Logic Fundamentals</h4>
+                        <p>
+                            Classical logic forms the foundation of rational discourse and philosophical analysis. 
+                            The filter applies these principles to ensure maximum clarity and logical consistency.
+                        </p>
+                        
+                        <h5>Modal Operators</h5>
+                        <ul>
+                            <li><strong>∃w (Existential):</strong> "There exists a possible world where..." - indicates possibility</li>
+                            <li><strong>∀w (Universal):</strong> "For all possible worlds..." - indicates necessity</li>
+                            <li><strong>Possibility:</strong> Something that could be true in at least one world</li>
+                            <li><strong>Necessity:</strong> Something that must be true in all worlds</li>
+                        </ul>
+                        
+                        <h5>Temporal Indexing</h5>
+                        <ul>
+                            <li><strong>t_-1:</strong> Past time - "yesterday", "was", "had"</li>
+                            <li><strong>t_0:</strong> Present time - "now", "currently", "is"</li>
+                            <li><strong>t_+1:</strong> Future time - "tomorrow", "will", "shall"</li>
+                        </ul>
+                        
+                        <h5>Logical Fallacies</h5>
+                        <ul>
+                            <li><strong>Ad Hominem:</strong> Attacking the person instead of the argument</li>
+                            <li><strong>False Dilemma:</strong> Presenting only two options when more exist</li>
+                            <li><strong>Begging the Question:</strong> Assuming what you're trying to prove</li>
+                            <li><strong>Hasty Generalization:</strong> Making broad claims from limited evidence</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="demo-section">
+                    <h3>Advanced Configuration</h3>
+                    <p style="margin-bottom: 20px; color: #6c757d;">
+                        Configure the classical logic filter behavior and analysis parameters.
+                    </p>
+                    
+                    <div class="advanced-controls">
+                        <h4>Filter Settings</h4>
+                        <div class="control-group">
+                            <label>Processing Mode:</label>
+                            <select id="processingMode">
+                                <option value="conservative">Conservative</option>
+                                <option value="balanced" selected>Balanced</option>
+                                <option value="aggressive">Aggressive</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Preserve Original:</label>
+                            <input type="checkbox" id="preserveOriginal" checked>
+                        </div>
+                        <div class="control-group">
+                            <label>Generate Notation:</label>
+                            <input type="checkbox" id="generateNotation" checked>
+                        </div>
+                        <div class="control-group">
+                            <label>Complexity Threshold:</label>
+                            <input type="range" id="complexityThreshold" min="1" max="10" value="5">
+                            <span id="thresholdValue">5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="statistics-grid" id="sessionStats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="messagesProcessed">0</div>
+                            <div class="stat-label">Messages Processed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="fallaciesDetected">0</div>
+                            <div class="stat-label">Fallacies Detected</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="vagueTermsCorrected">0</div>
+                            <div class="stat-label">Vague Terms Corrected</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="averageComplexity">0</div>
+                            <div class="stat-label">Average Complexity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="classical-logic-filter.js"></script>
+    <script>
+        // Initialize the classical logic filter
+        const logicFilter = new ClassicalLogicFilter();
+        
+        // Session statistics
+        let sessionStats = {
+            messagesProcessed: 0,
+            fallaciesDetected: 0,
+            vagueTermsCorrected: 0,
+            totalComplexity: 0,
+            averageComplexity: 0
+        };
+        
+        // Random examples for the random button
+        const randomExamples = [
+            "My name is Andy and tomorrow I'm not sure I will eat candy",
+            "I think maybe something might happen tomorrow if we do stuff, but you probably don't understand because you're always wrong about everything",
+            "Obviously everyone knows that all possible worlds exist necessarily, but some people think this is clearly wrong",
+            "If it rains tomorrow, then we might do something inside, but if it doesn't, we will definitely go somewhere outside",
+            "There is something somewhere that does stuff sometimes, and everyone always does the same thing every time",
+            "You are wrong about everything and clearly don't understand anything, so obviously this is true because it makes sense",
+            "Either you agree with me or you are stupid, and if you don't agree, then you must be wrong about everything",
+            "Yesterday I was doing something somewhere but now I'm not, and tomorrow we will definitely do something important",
+            "Some people sometimes do things that might be good, but all people always do the same thing every time",
+            "Everyone knows that all possible worlds exist necessarily, but some people think this is obviously wrong"
+        ];
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Update analysis tab if switching to it
+            if (tabName === 'analysis') {
+                updateAnalysisTab();
+            }
+        }
+
+        function processMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) {
+                alert('Please enter a message to process');
+                return;
+            }
+            
+            // Show progress indicator
+            showProgress();
+            
+            // Simulate processing delay for better UX
+            setTimeout(() => {
+                // Process the message
+                const result = logicFilter.processMessage(message);
+                
+                // Update session statistics
+                updateSessionStats(result);
+                
+                // Display results
+                displayResults(result);
+                
+                // Update analysis tab
+                updateAnalysisTab();
+                
+                // Hide progress indicator
+                hideProgress();
+            }, 500);
+        }
+
+        function showProgress() {
+            document.getElementById('progressIndicator').style.display = 'block';
+        }
+
+        function hideProgress() {
+            document.getElementById('progressIndicator').style.display = 'none';
+        }
+
+        function updateSessionStats(result) {
+            sessionStats.messagesProcessed++;
+            
+            if (result.analysis) {
+                if (result.analysis.fallacies) {
+                    sessionStats.fallaciesDetected += result.analysis.fallacies.length;
+                }
+                if (result.analysis.vagueTerms) {
+                    sessionStats.vagueTermsCorrected += result.analysis.vagueTerms.length;
+                }
+                
+                // Calculate complexity score
+                let complexityScore = 1;
+                if (result.analysis.modality) complexityScore += 2;
+                if (result.analysis.quantifiers) complexityScore += result.analysis.quantifiers.length;
+                if (result.analysis.connectives) complexityScore += result.analysis.connectives.length;
+                if (result.analysis.fallacies) complexityScore += result.analysis.fallacies.length;
+                if (result.analysis.vagueTerms) complexityScore += result.analysis.vagueTerms.length;
+                
+                sessionStats.totalComplexity += complexityScore;
+                sessionStats.averageComplexity = Math.round(sessionStats.totalComplexity / sessionStats.messagesProcessed);
+            }
+            
+            // Update statistics display
+            updateStatisticsDisplay();
+        }
+
+        function updateStatisticsDisplay() {
+            document.getElementById('messagesProcessed').textContent = sessionStats.messagesProcessed;
+            document.getElementById('fallaciesDetected').textContent = sessionStats.fallaciesDetected;
+            document.getElementById('vagueTermsCorrected').textContent = sessionStats.vagueTermsCorrected;
+            document.getElementById('averageComplexity').textContent = sessionStats.averageComplexity;
+        }
+
+        function displayResults(result) {
+            const resultsDiv = document.getElementById('results');
+            const showOriginal = document.getElementById('showOriginal').checked;
+            const generateFormula = document.getElementById('generateFormula').checked;
+            const detectFallacies = document.getElementById('detectFallacies').checked;
+            
+            let analysisHtml = '';
+            if (result.analysis) {
+                // Complexity meter
+                const complexityScore = calculateComplexityScore(result.analysis);
+                const complexityPercentage = Math.min(100, (complexityScore / 10) * 100);
+                
+                analysisHtml = `
+                    <div class="analysis-details">
+                        <h4>Comprehensive Logic Analysis</h4>
+                        
+                        <div class="complexity-meter">
+                            <span>Complexity:</span>
+                            <div class="complexity-bar">
+                                <div class="complexity-fill" style="width: ${complexityPercentage}%"></div>
+                            </div>
+                            <span>${complexityScore}/10</span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Temporal Index:</span>
+                            <span class="analysis-value">
+                                ${result.analysis.timeIndex || 't_0'}
+                                <span class="modal-indicator temporal">${result.analysis.timeIndex || 't_0'}</span>
+                            </span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Alethic Status:</span>
+                            <span class="analysis-value">
+                                ${result.analysis.alethicStatus ? result.analysis.alethicStatus.status : 'Factual'}
+                                ${result.analysis.alethicStatus && result.analysis.alethicStatus.symbol ? `<span class="modal-indicator ${result.analysis.alethicStatus.status}">${result.analysis.alethicStatus.symbol}</span>` : ''}
+                            </span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Modal Type:</span>
+                            <span class="analysis-value">
+                                ${result.analysis.modality ? result.analysis.modality.category : 'None'}
+                                ${result.analysis.modality ? `<span class="modal-indicator ${result.analysis.modality.type}">${result.analysis.modality.symbol}</span>` : ''}
+                            </span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Logical Complexity:</span>
+                            <span class="analysis-value">${result.analysis.logicalComplexity || 'simple'}</span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Quantifiers:</span>
+                            <span class="analysis-value">${result.analysis.quantifiers ? result.analysis.quantifiers.length : 0}</span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Connectives:</span>
+                            <span class="analysis-value">${result.analysis.connectives ? result.analysis.connectives.length : 0}</span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Vague Terms:</span>
+                            <span class="analysis-value">${result.analysis.vagueTerms ? result.analysis.vagueTerms.length : 0}</span>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <span class="analysis-label">Fallacies Detected:</span>
+                            <span class="analysis-value">${result.analysis.fallacies ? result.analysis.fallacies.length : 0}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Add fallacy detection if enabled
+                if (detectFallacies && result.analysis.fallacies && result.analysis.fallacies.length > 0) {
+                    analysisHtml += `
+                        <div class="fallacy-detection">
+                            <h5>Fallacies Detected and Corrected:</h5>
+                            ${result.analysis.fallacies.map(fallacy => `
+                                <div>• <strong>${fallacy}:</strong> ${getFallacyExplanation(fallacy)}</div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Add suggestions if available
+                if (result.analysis.suggestions && result.analysis.suggestions.length > 0) {
+                    analysisHtml += `
+                        <div class="suggestion-box">
+                            <h5>Improvement Suggestions:</h5>
+                            ${result.analysis.suggestions.map(suggestion => `
+                                <div>• <strong>${suggestion.type}:</strong> ${suggestion.correction || suggestion.suggestions?.join(', ')}</div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Add logical formula if enabled
+                if (generateFormula) {
+                    const formula = generateLogicalFormula(result.analysis);
+                    if (formula) {
+                        analysisHtml += `
+                            <div class="logic-formula">
+                                <strong>Logical Formula:</strong><br>
+                                ${formula}
+                            </div>
+                        `;
+                    }
+                }
+            }
+            
+            let originalHtml = '';
+            if (showOriginal && result.original !== result.processed) {
+                originalHtml = `
+                    <div class="original-text">
+                        <strong>Original Message:</strong><br>
+                        "${result.original}"
+                    </div>
+                `;
+            }
+            
+            resultsDiv.innerHTML = `
+                <div class="result-card">
+                    <h4>Message Processing Results <span class="logic-indicator">LOGIC</span></h4>
+                    
+                    ${originalHtml}
+                    
+                    <div class="processed-text">
+                        <strong>Processed Message:</strong><br>
+                        "${result.processed}"
+                    </div>
+                    
+                    ${result.changes && result.changes.length > 0 ? `
+                        <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                            <strong>Changes Made:</strong><br>
+                            ${result.changes.map(change => `• ${change}`).join('<br>')}
+                        </div>
+                    ` : ''}
+                    
+                    ${analysisHtml}
+                </div>
+            `;
+        }
+
+        function calculateComplexityScore(analysis) {
+            let score = 1;
+            if (analysis.modality) score += 2;
+            if (analysis.quantifiers) score += analysis.quantifiers.length;
+            if (analysis.connectives) score += analysis.connectives.length;
+            if (analysis.fallacies) score += analysis.fallacies.length;
+            if (analysis.vagueTerms) score += analysis.vagueTerms.length;
+            if (analysis.logicalComplexity === 'highly complex') score += 3;
+            else if (analysis.logicalComplexity === 'moderate') score += 1;
+            return Math.min(10, score);
+        }
+
+        function generateLogicalFormula(analysis) {
+            let formula = '';
+            
+            // Add quantifiers
+            if (analysis.quantifiers && analysis.quantifiers.length > 0) {
+                formula += analysis.quantifiers.map(q => q.symbol).join('') + ' ';
+            }
+            
+            // Add modal operators
+            if (analysis.modality) {
+                formula += analysis.modality.symbol + ' ';
+            }
+            
+            // Add temporal indexing
+            formula += `(${analysis.timeIndex || 't_0'})`;
+            
+            return formula.trim();
+        }
+
+        function getFallacyExplanation(fallacy) {
+            const explanations = {
+                'begging the question': 'Assumes the conclusion in the premises',
+                'ad hominem': 'Attacks the person instead of the argument',
+                'false dilemma': 'Presents only two options when more exist',
+                'hasty generalization': 'Makes broad claims from limited evidence'
+            };
+            return explanations[fallacy] || 'Logical error detected';
+        }
+
+        function loadExample(example) {
+            document.getElementById('messageInput').value = example;
+            processMessage();
+        }
+
+        function loadRandomExample() {
+            const randomExample = randomExamples[Math.floor(Math.random() * randomExamples.length)];
+            document.getElementById('messageInput').value = randomExample;
+            processMessage();
+        }
+
+        function clearInput() {
+            document.getElementById('messageInput').value = '';
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function updateAnalysisTab() {
+            const analysisDiv = document.getElementById('analysisResults');
+            
+            if (sessionStats.messagesProcessed === 0) {
+                analysisDiv.innerHTML = `
+                    <div class="result-card">
+                        <h4>Analysis Tools</h4>
+                        <p>Process a message in the Interactive Demo tab to see detailed analysis here.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            analysisDiv.innerHTML = `
+                <div class="result-card">
+                    <h4>Session Analysis</h4>
+                    <div class="statistics-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${sessionStats.messagesProcessed}</div>
+                            <div class="stat-label">Total Messages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${sessionStats.fallaciesDetected}</div>
+                            <div class="stat-label">Fallacies Found</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${sessionStats.vagueTermsCorrected}</div>
+                            <div class="stat-label">Vague Terms Fixed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${sessionStats.averageComplexity}</div>
+                            <div class="stat-label">Avg Complexity</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <h4>Complexity Distribution</h4>
+                    <div class="complexity-meter">
+                        <span>Session Average:</span>
+                        <div class="complexity-bar">
+                            <div class="complexity-fill" style="width: ${(sessionStats.averageComplexity / 10) * 100}%"></div>
+                        </div>
+                        <span>${sessionStats.averageComplexity}/10</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize complexity threshold slider
+        document.getElementById('complexityThreshold').addEventListener('input', function() {
+            document.getElementById('thresholdValue').textContent = this.value;
+        });
+
+        // Process default example on page load
+        window.onload = function() {
+            processMessage();
+            updateStatisticsDisplay();
+        };
+    </script>
+</body>
+</html>
+

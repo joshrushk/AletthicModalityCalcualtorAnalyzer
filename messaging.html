@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messaging - Modal Realism Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .auth-header {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            color: white;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+        }
+
+        .sidebar-header h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .users-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: background 0.3s;
+        }
+
+        .user-item:hover {
+            background: #e9ecef;
+        }
+
+        .user-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+
+        .user-info-item {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-status {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .online-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-left: 8px;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .chat-header h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .chat-status {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message.received {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.sent .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received .message-content {
+            background: white;
+            color: #2c3e50;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .logic-indicator {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
+        .original-content {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .original-content::before {
+            content: "Original: ";
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .logic-analysis {
+            background: #e8f4f8;
+            border-left: 3px solid #17a2b8;
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 0 8px 8px 0;
+            font-size: 11px;
+        }
+
+        .logic-analysis::before {
+            content: "Logic Analysis: ";
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        .toggle-original {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 8px;
+        }
+
+        .toggle-original:hover {
+            color: #5a6fd8;
+        }
+
+        .message-input-area {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            background: white;
+        }
+
+        .message-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+            min-height: 40px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .send-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .no-chat-selected {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .login-prompt {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #6c757d;
+        }
+
+        .login-prompt h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .auth-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .auth-tab-content {
+            display: none;
+        }
+
+        .auth-tab-content.active {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .social-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .google-btn {
+            background: #db4437;
+        }
+
+        .facebook-btn {
+            background: #3b5998;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .users-list {
+                display: flex;
+                overflow-x: auto;
+                flex-direction: row;
+            }
+            
+            .user-item {
+                min-width: 150px;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="nav-link">← Back to Main</a>
+            
+            <div class="auth-header" id="authHeader">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span>Welcome, <span id="userName"></span>!</span>
+                </div>
+                <button class="auth-btn" id="loginBtn" onclick="showAuthModal()">Login</button>
+                <button class="auth-btn" id="registerBtn" onclick="showAuthModal('register')">Register</button>
+                <button class="auth-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="loginPrompt" class="login-prompt">
+                <h2>Please Login</h2>
+                <p>You need to be logged in to use the messaging system.</p>
+                <button class="btn" onclick="showAuthModal()" style="width: auto; margin-top: 20px;">Go to Login</button>
+            </div>
+
+            <div id="messagingContent" class="hidden" style="display: flex; flex: 1;">
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Messages</h3>
+                        <input type="text" class="search-box" placeholder="Search users..." id="userSearch">
+                    </div>
+                    <div class="users-list" id="usersList">
+                        <p>Loading users...</p>
+                    </div>
+                </div>
+
+                <div class="chat-area">
+                    <div id="noChatSelected" class="no-chat-selected">
+                        <p>Select a user to start messaging</p>
+                    </div>
+
+                    <div id="chatInterface" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+                        <div class="chat-header">
+                            <h3 id="chatUserName">User Name</h3>
+                            <div class="chat-status" id="chatUserStatus">Online</div>
+                        </div>
+
+                        <div class="messages-container" id="messagesContainer">
+                            <!-- Messages will be loaded here -->
+                        </div>
+
+                        <div class="message-input-area">
+                        <div class="message-input-container">
+                            <textarea 
+                                class="message-input" 
+                                id="messageInput" 
+                                placeholder="Type your message... (will be processed for classical logic compliance)"
+                                rows="1"
+                            ></textarea>
+                            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #6c757d; text-align: center;">
+                            <span style="color: #667eea;">⚡</span> Messages are automatically processed to comply with classical logic principles
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <h2>Authentication</h2>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+            </div>
+            
+            <div id="loginTab" class="auth-tab-content active">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="modalLoginEmail">Email:</label>
+                        <input type="email" id="modalLoginEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalLoginPassword">Password:</label>
+                        <input type="password" id="modalLoginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn" onclick="modalLogin()">Login</button>
+                    
+                    <div class="social-login">
+                        <p>Or login with:</p>
+                        <a href="/auth/google" class="social-btn google-btn">Google</a>
+                        <a href="/auth/facebook" class="social-btn facebook-btn">Facebook</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="registerTab" class="auth-tab-content">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="modalRegisterName">Full Name:</label>
+                        <input type="text" id="modalRegisterName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalRegisterEmail">Email:</label>
+                        <input type="email" id="modalRegisterEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalRegisterPassword">Password:</label>
+                        <input type="password" id="modalRegisterPassword" placeholder="Enter your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalConfirmPassword">Confirm Password:</label>
+                        <input type="password" id="modalConfirmPassword" placeholder="Confirm your password">
+                    </div>
+                    <button class="btn" onclick="modalRegister()">Register</button>
+                </div>
+            </div>
+            
+            <div id="authMessage"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        // Global variables
+        let currentUser = null;
+        let isLoggedIn = false;
+        let socket = null;
+        let selectedUserId = null;
+        let users = [];
+
+        // API base URL
+        const API_BASE = window.location.origin;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initAuth();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Message input enter key
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Auto-resize textarea
+            document.getElementById('messageInput').addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+
+            // User search
+            document.getElementById('userSearch').addEventListener('input', function() {
+                filterUsers(this.value);
+            });
+        }
+
+        // Authentication functions
+        function initAuth() {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                // Verify token and get user info
+                fetch(`${API_BASE}/api/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Invalid token');
+                    }
+                })
+                .then(user => {
+                    currentUser = user;
+                    isLoggedIn = true;
+                    updateAuthUI();
+                    loadUsers();
+                    initSocket();
+                })
+                .catch(error => {
+                    console.error('Auth error:', error);
+                    localStorage.removeItem('authToken');
+                    updateAuthUI();
+                });
+            } else {
+                updateAuthUI();
+            }
+        }
+
+        function updateAuthUI() {
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loginPrompt = document.getElementById('loginPrompt');
+            const messagingContent = document.getElementById('messagingContent');
+
+            if (isLoggedIn && currentUser) {
+                userInfo.style.display = 'block';
+                userName.textContent = currentUser.name;
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                loginPrompt.style.display = 'none';
+                messagingContent.style.display = 'flex';
+            } else {
+                userInfo.style.display = 'none';
+                loginBtn.style.display = 'block';
+                registerBtn.style.display = 'block';
+                logoutBtn.style.display = 'none';
+                loginPrompt.style.display = 'flex';
+                messagingContent.style.display = 'none';
+            }
+        }
+
+        function showAuthModal(tab = 'login') {
+            document.getElementById('authModal').style.display = 'block';
+            if (tab === 'register') {
+                switchAuthTab('register');
+            } else {
+                switchAuthTab('login');
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+            clearAuthMessages();
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.auth-tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        async function modalLogin() {
+            const email = document.getElementById('modalLoginEmail').value;
+            const password = document.getElementById('modalLoginPassword').value;
+
+            if (!email || !password) {
+                showAuthMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('authToken', data.token);
+                    currentUser = data.user;
+                    isLoggedIn = true;
+                    updateAuthUI();
+                    loadUsers();
+                    initSocket();
+                    showAuthMessage('Login successful!', 'success');
+                    setTimeout(() => {
+                        closeAuthModal();
+                    }, 1500);
+                } else {
+                    showAuthMessage(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showAuthMessage('Network error. Please try again.', 'error');
+            }
+        }
+
+        async function modalRegister() {
+            const name = document.getElementById('modalRegisterName').value;
+            const email = document.getElementById('modalRegisterEmail').value;
+            const password = document.getElementById('modalRegisterPassword').value;
+            const confirmPassword = document.getElementById('modalConfirmPassword').value;
+
+            if (!name || !email || !password || !confirmPassword) {
+                showAuthMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAuthMessage('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAuthMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('authToken', data.token);
+                    currentUser = data.user;
+                    isLoggedIn = true;
+                    updateAuthUI();
+                    loadUsers();
+                    initSocket();
+                    showAuthMessage('Registration successful!', 'success');
+                    setTimeout(() => {
+                        closeAuthModal();
+                    }, 1500);
+                } else {
+                    showAuthMessage(data.error || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                showAuthMessage('Network error. Please try again.', 'error');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            updateAuthUI();
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+        }
+
+        function showAuthMessage(message, type) {
+            const messageDiv = document.getElementById('authMessage');
+            messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+        }
+
+        function clearAuthMessages() {
+            document.getElementById('authMessage').innerHTML = '';
+        }
+
+        // Socket initialization
+        function initSocket() {
+            if (socket) return;
+
+            socket = io();
+            
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                if (currentUser) {
+                    socket.emit('user_online', currentUser.id);
+                }
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+            });
+
+            socket.on('new_message', (message) => {
+                if (selectedUserId && (message.sender_id == selectedUserId || message.receiver_id == selectedUserId)) {
+                    addMessageToChat(message);
+                }
+            });
+
+            socket.on('user_status_change', (data) => {
+                updateUserStatus(data);
+            });
+        }
+
+        // User management
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/api/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    users = await response.json();
+                    displayUsers(users);
+                } else {
+                    console.error('Failed to load users');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function displayUsers(usersList) {
+            const usersListElement = document.getElementById('usersList');
+            
+            if (usersList.length === 0) {
+                usersListElement.innerHTML = '<p>No other users found</p>';
+                return;
+            }
+
+            usersListElement.innerHTML = usersList.map(user => `
+                <div class="user-item" onclick="selectUser(${user.id})" data-user-id="${user.id}">
+                    <img src="${user.profile_image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMTYiIHI9IjgiIGZpbGw9IiM5Q0VDRUYiLz4KPHBhdGggZD0iTTEyIDI4QzEyIDI0IDMTIDIwIDIwIDIwQzI3IDIwIDI4IDI0IDI4IDI4VjMySDEyVjI4WiIgZmlsbD0iIzlDRUNFRiIvPgo8L3N2Zz4='}" 
+                         alt="Avatar" class="user-avatar">
+                    <div class="user-info-item">
+                        <div class="user-name">${user.display_name || user.name}</div>
+                        <div class="user-status">${user.is_online ? 'Online' : 'Offline'}</div>
+                    </div>
+                    ${user.is_online ? '<div class="online-indicator"></div>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function filterUsers(searchTerm) {
+            const filteredUsers = users.filter(user => 
+                user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (user.display_name && user.display_name.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            displayUsers(filteredUsers);
+        }
+
+        function selectUser(userId) {
+            selectedUserId = userId;
+            
+            // Update UI
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-user-id="${userId}"]`).classList.add('active');
+
+            // Show chat interface
+            document.getElementById('noChatSelected').style.display = 'none';
+            document.getElementById('chatInterface').style.display = 'flex';
+
+            // Update chat header
+            const user = users.find(u => u.id == userId);
+            document.getElementById('chatUserName').textContent = user.display_name || user.name;
+            document.getElementById('chatUserStatus').textContent = user.is_online ? 'Online' : 'Offline';
+
+            // Load messages
+            loadMessages(userId);
+        }
+
+        // Messaging functions
+        async function loadMessages(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/messages/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const messages = await response.json();
+                    displayMessages(messages);
+                } else {
+                    console.error('Failed to load messages');
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        function displayMessages(messages) {
+            const container = document.getElementById('messagesContainer');
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d; margin-top: 50px;">No messages yet. Start the conversation!</p>';
+                return;
+            }
+
+            container.innerHTML = messages.map(message => {
+                const isSent = message.sender_id == currentUser.id;
+                const time = new Date(message.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const hasLogicProcessing = message.logic_processed || message.original_content;
+                
+                let messageHtml = `
+                    <div class="message ${isSent ? 'sent' : 'received'}">
+                        <div class="message-content">
+                            ${message.content}
+                            ${hasLogicProcessing ? '<span class="logic-indicator">LOGIC</span>' : ''}
+                            <div class="message-time">${time}</div>
+                `;
+                
+                // Add original content if it exists and is different
+                if (message.original_content && message.original_content !== message.content) {
+                    messageHtml += `
+                        <button class="toggle-original" onclick="toggleOriginalContent(this)">Show Original</button>
+                        <div class="original-content" style="display: none;">${message.original_content}</div>
+                    `;
+                }
+                
+                // Add logic analysis if available
+                if (message.logic_analysis) {
+                    try {
+                        const analysis = typeof message.logic_analysis === 'string' 
+                            ? JSON.parse(message.logic_analysis) 
+                            : message.logic_analysis;
+                        
+                        if (analysis && analysis.logicalComplexity) {
+                            messageHtml += `
+                                <div class="logic-analysis">
+                                    Complexity: ${analysis.logicalComplexity} | 
+                                    Time: ${analysis.timeIndex || 't_0'} | 
+                                    ${analysis.modality ? `Modality: ${analysis.modality.type}` : 'No modality'}
+                                </div>
+                            `;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing logic analysis:', e);
+                    }
+                }
+                
+                messageHtml += `
+                        </div>
+                    </div>
+                `;
+                
+                return messageHtml;
+            }).join('');
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addMessageToChat(message) {
+            const container = document.getElementById('messagesContainer');
+            const isSent = message.sender_id == currentUser.id;
+            const time = new Date(message.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const hasLogicProcessing = message.logic_processed || message.original_content;
+            
+            let messageHtml = `
+                <div class="message ${isSent ? 'sent' : 'received'}">
+                    <div class="message-content">
+                        ${message.content}
+                        ${hasLogicProcessing ? '<span class="logic-indicator">LOGIC</span>' : ''}
+                        <div class="message-time">${time}</div>
+            `;
+            
+            // Add original content if it exists and is different
+            if (message.original_content && message.original_content !== message.content) {
+                messageHtml += `
+                    <button class="toggle-original" onclick="toggleOriginalContent(this)">Show Original</button>
+                    <div class="original-content" style="display: none;">${message.original_content}</div>
+                `;
+            }
+            
+            // Add logic analysis if available
+            if (message.logic_analysis) {
+                try {
+                    const analysis = typeof message.logic_analysis === 'string' 
+                        ? JSON.parse(message.logic_analysis) 
+                        : message.logic_analysis;
+                    
+                    if (analysis && analysis.logicalComplexity) {
+                        messageHtml += `
+                            <div class="logic-analysis">
+                                Complexity: ${analysis.logicalComplexity} | 
+                                Time: ${analysis.timeIndex || 't_0'} | 
+                                ${analysis.modality ? `Modality: ${analysis.modality.type}` : 'No modality'}
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.error('Error parsing logic analysis:', e);
+                }
+            }
+            
+            messageHtml += `
+                    </div>
+                </div>
+            `;
+            
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = messageHtml;
+            container.appendChild(messageElement.firstElementChild);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+            
+            if (!content || !selectedUserId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({
+                        receiver_id: selectedUserId,
+                        content: content
+                    })
+                });
+
+                if (response.ok) {
+                    input.value = '';
+                    input.style.height = 'auto';
+                } else {
+                    console.error('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+
+        function updateUserStatus(data) {
+            // Update user status in the UI
+            const userItem = document.querySelector(`[data-user-id="${data.userId}"]`);
+            if (userItem) {
+                const statusElement = userItem.querySelector('.user-status');
+                const indicatorElement = userItem.querySelector('.online-indicator');
+                
+                if (data.status === 'online') {
+                    statusElement.textContent = 'Online';
+                    if (!indicatorElement) {
+                        userItem.innerHTML += '<div class="online-indicator"></div>';
+                    }
+                } else {
+                    statusElement.textContent = 'Offline';
+                    if (indicatorElement) {
+                        indicatorElement.remove();
+                    }
+                }
+            }
+        }
+
+        // Toggle original content visibility
+        function toggleOriginalContent(button) {
+            const originalDiv = button.nextElementSibling;
+            if (originalDiv.style.display === 'none') {
+                originalDiv.style.display = 'block';
+                button.textContent = 'Hide Original';
+            } else {
+                originalDiv.style.display = 'none';
+                button.textContent = 'Show Original';
+            }
+        }
+
+        // Handle OAuth redirects
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            localStorage.setItem('authToken', token);
+            window.location.href = window.location.pathname;
+        }
+    </script>
+</body>
+</html>

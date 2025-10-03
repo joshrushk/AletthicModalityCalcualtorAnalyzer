@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tutorial - Modal Realism Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .tutorial-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tutorial-content {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .tutorial-nav {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-nav li {
+            margin-bottom: 10px;
+        }
+
+        .tutorial-nav a {
+            display: block;
+            padding: 12px 15px;
+            background: white;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .tutorial-nav a:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .tutorial-nav a.active {
+            background: #667eea;
+            color: white;
+            border-left-color: #5a6fd8;
+        }
+
+        .tutorial-nav a.completed {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-step {
+            display: none;
+        }
+
+        .tutorial-step.active {
+            display: block;
+        }
+
+        .step-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .step-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .step-subtitle {
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        .step-content {
+            line-height: 1.6;
+            color: #495057;
+        }
+
+        .step-content h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+        }
+
+        .step-content p {
+            margin-bottom: 15px;
+        }
+
+        .step-content ul, .step-content ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        .step-content li {
+            margin-bottom: 8px;
+        }
+
+        .interactive-demo {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .demo-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .demo-controls input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .demo-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .demo-controls button:hover {
+            background: #5a6fd8;
+        }
+
+        .demo-result {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            min-height: 100px;
+        }
+
+        .concept-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .concept-box h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .example-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .example-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .quiz-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .quiz-question {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-options li {
+            margin: 10px 0;
+        }
+
+        .quiz-options label {
+            display: block;
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-options label:hover {
+            background: #e9ecef;
+        }
+
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .quiz-options input[type="radio"]:checked + label {
+            background: #667eea;
+            color: white;
+            border-color: #5a6fd8;
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .quiz-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .quiz-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .nav-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #5a6268;
+        }
+
+        .nav-btn.primary {
+            background: #667eea;
+        }
+
+        .nav-btn.primary:hover {
+            background: #5a6fd8;
+        }
+
+        .nav-btn:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .completion-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .tutorial-sidebar {
+                width: 100%;
+                height: 200px;
+                order: 2;
+            }
+
+            .tutorial-content {
+                order: 1;
+            }
+
+            .demo-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Interactive Tutorial</h1>
+            <a href="index.html" class="nav-link">← Back to Main</a>
+        </div>
+
+        <div class="main-content">
+            <div class="tutorial-sidebar">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">0% Complete</div>
+
+                <ul class="tutorial-nav" id="tutorialNav">
+                    <li><a href="#" onclick="showStep(0)" class="active">Welcome & Overview</a></li>
+                    <li><a href="#" onclick="showStep(1)">What is Modal Realism?</a></li>
+                    <li><a href="#" onclick="showStep(2)">Understanding Possible Worlds</a></li>
+                    <li><a href="#" onclick="showStep(3)">Mathematical Foundations</a></li>
+                    <li><a href="#" onclick="showStep(4)">Using the Calculators</a></li>
+                    <li><a href="#" onclick="showStep(5)">Advanced Features</a></li>
+                    <li><a href="#" onclick="showStep(6)">Practice & Quiz</a></li>
+                    <li><a href="#" onclick="showStep(7)">Next Steps</a></li>
+                </ul>
+            </div>
+
+            <div class="tutorial-content">
+                <!-- Step 0: Welcome -->
+                <div class="tutorial-step active" id="step0">
+                    <div class="step-header">
+                        <h1 class="step-title">Welcome to Modal Realism!</h1>
+                        <p class="step-subtitle">Your journey into the fascinating world of possible worlds and modal logic</p>
+                    </div>
+                    <div class="step-content">
+                        <p>Welcome to the Interactive Tutorial for the Modal Realism Calculator Suite! This comprehensive guide will take you through the fundamental concepts of modal realism, the mathematical foundations behind our calculators, and how to use all the features effectively.</p>
+                        
+                        <div class="concept-box">
+                            <h4>What You'll Learn</h4>
+                            <ul>
+                                <li>The philosophical foundations of modal realism</li>
+                                <li>How possible worlds relate to mathematics</li>
+                                <li>Using the various calculators and tools</li>
+                                <li>Advanced features like AI assistance and collaboration</li>
+                                <li>Practical applications and examples</li>
+                            </ul>
+                        </div>
+
+                        <p>This tutorial is designed to be interactive and hands-on. You'll have the opportunity to try calculations, answer quiz questions, and explore concepts as you learn them.</p>
+
+                        <div class="example-box">
+                            <h4>Quick Start</h4>
+                            <p>If you're eager to get started, you can jump to any section using the navigation on the left. However, we recommend going through the tutorial in order for the best learning experience.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: What is Modal Realism? -->
+                <div class="tutorial-step" id="step1">
+                    <div class="step-header">
+                        <h1 class="step-title">What is Modal Realism?</h1>
+                        <p class="step-subtitle">Understanding the philosophical foundation</p>
+                    </div>
+                    <div class="step-content">
+                        <p>Modal realism is a philosophical position that takes possible worlds seriously as concrete entities. Unlike fictionalism or conceptualism, modal realism claims that possible worlds are as real as the actual world.</p>
+
+                        <h3>Key Concepts</h3>
+                        <ul>
+                            <li><strong>Possible Worlds:</strong> Complete ways things might have been</li>
+                            <li><strong>Actual World:</strong> The world we inhabit (just one among many)</li>
+                            <li><strong>Modal Space:</strong> The "space" containing all possible worlds</li>
+                            <li><strong>Accessibility Relations:</strong> How worlds relate to each other</li>
+                        </ul>
+
+                        <div class="concept-box">
+                            <h4>David Lewis's Modal Realism</h4>
+                            <p>David Lewis (1941-2001) was the most famous proponent of modal realism. He argued that possible worlds are concrete entities, spatiotemporally isolated from each other, and that our world is just one among many.</p>
+                        </div>
+
+                        <div class="interactive-demo">
+                            <div class="demo-title">Try This: Explore Modal Concepts</div>
+                            <p>Think of a simple statement like "I could have been a doctor." In modal realism, this means there's a possible world where you are a doctor. What other possible worlds can you imagine?</p>
+                            <div class="demo-controls">
+                                <input type="text" id="possibleWorldInput" placeholder="Describe a possible world...">
+                                <button onclick="analyzePossibleWorld()">Analyze</button>
+                            </div>
+                            <div class="demo-result" id="worldAnalysisResult">
+                                Enter a description above to see how it relates to modal realism concepts.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Understanding Possible Worlds -->
+                <div class="tutorial-step" id="step2">
+                    <div class="step-header">
+                        <h1 class="step-title">Understanding Possible Worlds</h1>
+                        <p class="step-subtitle">The building blocks of modal space</p>
+                    </div>
+                    <div class="step-content">
+                        <p>Possible worlds are complete ways things might have been. They are maximal consistent sets of propositions - meaning they contain every proposition or its negation, but never both.</p>
+
+                        <h3>Characteristics of Possible Worlds</h3>
+                        <ul>
+                            <li><strong>Completeness:</strong> Every proposition is either true or false</li>
+                            <li><strong>Consistency:</strong> No contradictions exist within a world</li>
+                            <li><strong>Isolation:</strong> Worlds don't interact causally</li>
+                            <li><strong>Concreteness:</strong> Worlds are as real as our own</li>
+                        </ul>
+
+                        <div class="example-box">
+                            <h4>Example: The World Where Dinosaurs Survived</h4>
+                            <p>In this possible world, the asteroid that killed the dinosaurs never hit Earth. This world contains all the consequences of that change: different evolution, different species, different geography, etc. It's a complete, consistent description of how things could have been.</p>
+                        </div>
+
+                        <div class="interactive-demo">
+                            <div class="demo-title">World Builder</div>
+                            <p>Create your own possible world by modifying one aspect of reality:</p>
+                            <div class="demo-controls">
+                                <select id="worldModification">
+                                    <option value="">Select a modification...</option>
+                                    <option value="gravity">Gravity is twice as strong</option>
+                                    <option value="time">Time flows backwards</option>
+                                    <option value="color">The sky is green</option>
+                                    <option value="life">Humans never evolved</option>
+                                </select>
+                                <button onclick="buildPossibleWorld()">Build World</button>
+                            </div>
+                            <div class="demo-result" id="worldBuilderResult">
+                                Select a modification to see what this possible world would be like.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Mathematical Foundations -->
+                <div class="tutorial-step" id="step3">
+                    <div class="step-header">
+                        <h1 class="step-title">Mathematical Foundations</h1>
+                        <p class="step-subtitle">How mathematics connects to modal space</p>
+                    </div>
+                    <div class="step-content">
+                        <p>In Yagisawa's extended modal realism, there's a mathematical correspondence between numbers and possible worlds. This creates a bridge between abstract mathematics and concrete modal space.</p>
+
+                        <h3>The Mathematical Correspondence</h3>
+                        <ul>
+                            <li><strong>Prime Numbers:</strong> Represent fundamental possible worlds</li>
+                            <li><strong>Composite Numbers:</strong> Represent composite worlds (combinations of fundamental worlds)</li>
+                            <li><strong>World Size:</strong> Calculated as 1/n (inverse relationship)</li>
+                            <li><strong>Probability:</strong> Equal to world size in modal dimension</li>
+                        </ul>
+
+                        <div class="concept-box">
+                            <h4>Why This Correspondence?</h4>
+                            <p>Prime numbers are irreducible - they can't be broken down into smaller factors. This makes them perfect for representing fundamental possible worlds. Composite numbers, being products of primes, naturally represent worlds that combine multiple fundamental possibilities.</p>
+                        </div>
+
+                        <div class="interactive-demo">
+                            <div class="demo-title">Mathematical Calculator</div>
+                            <p>Try calculating the properties of different worlds:</p>
+                            <div class="demo-controls">
+                                <input type="number" id="mathWorldInput" placeholder="Enter a number (2-100)" min="2" max="100" value="12">
+                                <button onclick="calculateWorldMath()">Calculate</button>
+                            </div>
+                            <div class="demo-result" id="mathCalculationResult">
+                                Enter a number to see its modal properties.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Using the Calculators -->
+                <div class="tutorial-step" id="step4">
+                    <div class="step-header">
+                        <h1 class="step-title">Using the Calculators</h1>
+                        <p class="step-subtitle">Hands-on practice with the tools</p>
+                    </div>
+                    <div class="step-content">
+                        <p>The Modal Realism Calculator Suite includes several powerful tools for exploring modal space. Let's learn how to use each one effectively.</p>
+
+                        <h3>Available Calculators</h3>
+                        <ul>
+                            <li><strong>Numerical World Calculator:</strong> Basic world analysis</li>
+                            <li><strong>Proposition Logic Calculator:</strong> Logical analysis</li>
+                            <li><strong>Modal Realism Calculator:</strong> Extended analysis with visualizations</li>
+                            <li><strong>Classical Logic Filter:</strong> Logic filtering and analysis</li>
+                        </ul>
+
+                        <div class="interactive-demo">
+                            <div class="demo-title">Calculator Practice</div>
+                            <p>Let's practice using the basic calculator:</p>
+                            <div class="demo-controls">
+                                <input type="number" id="calcPracticeInput" placeholder="Enter a number" min="2" max="50" value="15">
+                                <button onclick="practiceCalculation()">Calculate</button>
+                            </div>
+                            <div class="demo-result" id="calcPracticeResult">
+                                Enter a number to see the calculation process.
+                            </div>
+                        </div>
+
+                        <h3>Tips for Effective Use</h3>
+                        <ul>
+                            <li>Start with small numbers to understand the patterns</li>
+                            <li>Compare prime and composite numbers</li>
+                            <li>Use the step-by-step explanations</li>
+                            <li>Save interesting calculations to your history</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 5: Advanced Features -->
+                <div class="tutorial-step" id="step5">
+                    <div class="step-header">
+                        <h1 class="step-title">Advanced Features</h1>
+                        <p class="step-subtitle">AI assistance, collaboration, and visualization</p>
+                    </div>
+                    <div class="step-content">
+                        <p>The suite includes several advanced features that enhance your modal realism exploration experience.</p>
+
+                        <h3>AI Assistant</h3>
+                        <p>The AI assistant can help you understand concepts, explain calculations, and provide philosophical context. It's trained on modal realism literature and can answer questions about the mathematical and philosophical aspects.</p>
+
+                        <h3>Real-time Collaboration</h3>
+                        <p>Work with others in real-time, sharing calculations and discussing modal space. The collaborative features allow multiple users to explore the same calculations simultaneously.</p>
+
+                        <h3>3D Visualization</h3>
+                        <p>See modal space in three dimensions! The 3D visualizer shows how possible worlds relate to each other in modal space, with different colors and sizes representing different properties.</p>
+
+                        <div class="example-box">
+                            <h4>Try the Advanced Features</h4>
+                            <p>After completing this tutorial, explore the AI Assistant, Collaborative Calculator, and 3D Visualizer. Each offers unique perspectives on modal realism and can deepen your understanding.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Practice & Quiz -->
+                <div class="tutorial-step" id="step6">
+                    <div class="step-header">
+                        <h1 class="step-title">Practice & Quiz</h1>
+                        <p class="step-subtitle">Test your understanding</p>
+                    </div>
+                    <div class="step-content">
+                        <p>Let's test your understanding with some practice questions and calculations.</p>
+
+                        <div class="quiz-section">
+                            <div class="quiz-question">Question 1: What do prime numbers represent in extended modal realism?</div>
+                            <ul class="quiz-options">
+                                <li>
+                                    <input type="radio" name="q1" value="a" id="q1a">
+                                    <label for="q1a">Composite possible worlds</label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="q1" value="b" id="q1b">
+                                    <label for="q1b">Fundamental possible worlds</label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="q1" value="c" id="q1c">
+                                    <label for="q1c">Impossible worlds</label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="q1" value="d" id="q1d">
+                                    <label for="q1d">The actual world only</label>
+                                </li>
+                            </ul>
+                            <div class="quiz-feedback" id="q1feedback"></div>
+                        </div>
+
+                        <div class="quiz-section">
+                            <div class="quiz-question">Question 2: How is world size calculated?</div>
+                            <ul class="quiz-options">
+                                <li>
+                                    <input type="radio" name="q2" value="a" id="q2a">
+                                    <label for="q2a">n (the number itself)</label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="q2" value="b" id="q2b">
+                                    <label for="q2b">1/n (inverse of the number)</label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="q2" value="c" id="q2c">
+                                    <label for="q2c">n² (square of the number)</label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="q2" value="d" id="q2d">
+                                    <label for="q2d">log(n) (logarithm of the number)</label>
+                                </li>
+                            </ul>
+                            <div class="quiz-feedback" id="q2feedback"></div>
+                        </div>
+
+                        <div class="interactive-demo">
+                            <div class="demo-title">Practice Calculation</div>
+                            <p>Calculate the properties of world 18:</p>
+                            <div class="demo-controls">
+                                <button onclick="practiceWorld18()">Calculate World 18</button>
+                            </div>
+                            <div class="demo-result" id="practiceWorld18Result">
+                                Click the button to see the calculation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 7: Next Steps -->
+                <div class="tutorial-step" id="step7">
+                    <div class="step-header">
+                        <h1 class="step-title">Next Steps</h1>
+                        <p class="step-subtitle">Continue your modal realism journey</p>
+                    </div>
+                    <div class="step-content">
+                        <p>Congratulations! You've completed the interactive tutorial. You now have a solid foundation in modal realism and know how to use the calculator suite effectively.</p>
+
+                        <h3>What's Next?</h3>
+                        <ul>
+                            <li><strong>Explore the Calculators:</strong> Try different numbers and see the patterns</li>
+                            <li><strong>Use the AI Assistant:</strong> Ask questions about specific concepts</li>
+                            <li><strong>Collaborate:</strong> Share calculations with others</li>
+                            <li><strong>Visualize:</strong> See modal space in 3D</li>
+                            <li><strong>Read More:</strong> Explore the philosophical literature</li>
+                        </ul>
+
+                        <div class="concept-box">
+                            <h4>Recommended Reading</h4>
+                            <ul>
+                                <li>David Lewis - "On the Plurality of Worlds"</li>
+                                <li>Takashi Yagisawa - "Worlds and Individuals, Possible and Otherwise"</li>
+                                <li>Saul Kripke - "Naming and Necessity"</li>
+                                <li>Alvin Plantinga - "The Nature of Necessity"</li>
+                            </ul>
+                        </div>
+
+                        <div class="example-box">
+                            <h4>Keep Learning</h4>
+                            <p>Modal realism is a rich and complex field. Continue exploring, asking questions, and experimenting with the calculators. The more you practice, the deeper your understanding will become.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="nav-btn" id="prevBtn" onclick="previousStep()" disabled>Previous</button>
+                    <button class="nav-btn primary" id="nextBtn" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 8;
+        const completedSteps = new Set();
+
+        // Initialize tutorial
+        function initTutorial() {
+            updateProgress();
+            updateNavigation();
+        }
+
+        // Show specific step
+        function showStep(stepIndex) {
+            // Hide all steps
+            document.querySelectorAll('.tutorial-step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Remove active class from all nav items
+            document.querySelectorAll('.tutorial-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected step
+            document.getElementById(`step${stepIndex}`).classList.add('active');
+            document.querySelectorAll('.tutorial-nav a')[stepIndex].classList.add('active');
+
+            currentStep = stepIndex;
+            updateProgress();
+            updateNavigation();
+        }
+
+        // Next step
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                completedSteps.add(currentStep);
+                showStep(currentStep + 1);
+            }
+        }
+
+        // Previous step
+        function previousStep() {
+            if (currentStep > 0) {
+                showStep(currentStep - 1);
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            const progress = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `${Math.round(progress)}% Complete`;
+
+            // Update completed steps in nav
+            completedSteps.forEach(step => {
+                const navLink = document.querySelectorAll('.tutorial-nav a')[step];
+                navLink.classList.add('completed');
+                navLink.innerHTML += '<span class="completion-badge">✓</span>';
+            });
+        }
+
+        // Update navigation buttons
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentStep === 0;
+            
+            if (currentStep === totalSteps - 1) {
+                nextBtn.textContent = 'Finish';
+                nextBtn.onclick = finishTutorial;
+            } else {
+                nextBtn.textContent = 'Next';
+                nextBtn.onclick = nextStep;
+            }
+        }
+
+        // Finish tutorial
+        function finishTutorial() {
+            completedSteps.add(currentStep);
+            alert('Congratulations! You have completed the tutorial. You can now explore the full calculator suite with confidence.');
+            window.location.href = 'index.html';
+        }
+
+        // Interactive demo functions
+        function analyzePossibleWorld() {
+            const input = document.getElementById('possibleWorldInput').value;
+            const result = document.getElementById('worldAnalysisResult');
+            
+            if (input.trim()) {
+                result.innerHTML = `
+                    <strong>Analysis of: "${input}"</strong><br><br>
+                    In modal realism, this describes a possible world where the described scenario is true. 
+                    This world would be:<br>
+                    • Complete (every proposition is true or false)<br>
+                    • Consistent (no contradictions)<br>
+                    • Spatiotemporally isolated from our world<br>
+                    • As real as our actual world<br><br>
+                    The mathematical correspondence would depend on the specific details of your world description.
+                `;
+            }
+        }
+
+        function buildPossibleWorld() {
+            const modification = document.getElementById('worldModification').value;
+            const result = document.getElementById('worldBuilderResult');
+            
+            const worldDescriptions = {
+                gravity: "In this world, gravity is twice as strong. All objects fall faster, buildings need stronger foundations, and human physiology would be different. This affects everything from weather patterns to evolution.",
+                time: "In this world, time flows backwards. People age in reverse, cause comes after effect, and entropy decreases over time. This creates a completely different physics and experience of reality.",
+                color: "In this world, the sky is green instead of blue. This affects light refraction, plant evolution, and the entire color spectrum of the world. It's a subtle but complete change to the visual experience of reality.",
+                life: "In this world, humans never evolved. Other species might have developed intelligence, or the world might be dominated by different forms of life. The entire history and future of the planet would be different."
+            };
+            
+            if (modification) {
+                result.innerHTML = `<strong>Possible World: ${modification}</strong><br><br>${worldDescriptions[modification]}`;
+            }
+        }
+
+        function calculateWorldMath() {
+            const number = parseInt(document.getElementById('mathWorldInput').value);
+            const result = document.getElementById('mathCalculationResult');
+            
+            if (number >= 2) {
+                const isPrime = isPrimeNumber(number);
+                const worldSize = 1 / number;
+                const primeFactors = getPrimeFactors(number);
+                
+                result.innerHTML = `
+                    <strong>World ${number} Analysis:</strong><br><br>
+                    <strong>Type:</strong> ${isPrime ? 'Prime (Fundamental)' : 'Composite'}<br>
+                    <strong>World Size:</strong> ${worldSize.toFixed(6)}<br>
+                    <strong>Probability:</strong> ${worldSize.toFixed(6)}<br>
+                    <strong>Prime Factors:</strong> [${primeFactors.join(', ')}]<br>
+                    <strong>Modal Significance:</strong> ${isPrime ? 'This is a fundamental possible world that cannot be broken down further.' : `This is a composite world formed from ${primeFactors.length} fundamental worlds.`}
+                `;
+            }
+        }
+
+        function practiceCalculation() {
+            const number = parseInt(document.getElementById('calcPracticeInput').value);
+            const result = document.getElementById('calcPracticeResult');
+            
+            if (number >= 2) {
+                const isPrime = isPrimeNumber(number);
+                const worldSize = 1 / number;
+                const primeFactors = getPrimeFactors(number);
+                
+                result.innerHTML = `
+                    <strong>Step-by-Step Calculation for World ${number}:</strong><br><br>
+                    <strong>Step 1:</strong> Check if ${number} is prime<br>
+                    <strong>Result:</strong> ${isPrime ? 'Yes' : 'No'}<br><br>
+                    <strong>Step 2:</strong> Calculate world size = 1/${number}<br>
+                    <strong>Result:</strong> ${worldSize.toFixed(6)}<br><br>
+                    <strong>Step 3:</strong> Find prime factors<br>
+                    <strong>Result:</strong> [${primeFactors.join(', ')}]<br><br>
+                    <strong>Step 4:</strong> Determine modal significance<br>
+                    <strong>Result:</strong> ${isPrime ? 'Fundamental world' : `Composite world with ${primeFactors.length} components`}
+                `;
+            }
+        }
+
+        function practiceWorld18() {
+            const result = document.getElementById('practiceWorld18Result');
+            const isPrime = isPrimeNumber(18);
+            const worldSize = 1 / 18;
+            const primeFactors = getPrimeFactors(18);
+            
+            result.innerHTML = `
+                <strong>World 18 Analysis:</strong><br><br>
+                <strong>Is Prime:</strong> ${isPrime}<br>
+                <strong>World Size:</strong> ${worldSize.toFixed(6)}<br>
+                <strong>Prime Factors:</strong> [${primeFactors.join(', ')}] = 2 × 3²<br>
+                <strong>Type:</strong> Composite world<br>
+                <strong>Components:</strong> 2 fundamental worlds (worlds 2 and 3)<br>
+                <strong>Interpretation:</strong> This world combines the possibilities represented by the prime numbers 2 and 3, with 3 appearing twice (squared).
+            `;
+        }
+
+        // Quiz functions
+        function checkQuizAnswers() {
+            // Question 1
+            const q1Answer = document.querySelector('input[name="q1"]:checked');
+            const q1Feedback = document.getElementById('q1feedback');
+            
+            if (q1Answer) {
+                if (q1Answer.value === 'b') {
+                    q1Feedback.textContent = 'Correct! Prime numbers represent fundamental possible worlds.';
+                    q1Feedback.className = 'quiz-feedback correct';
+                } else {
+                    q1Feedback.textContent = 'Incorrect. Prime numbers represent fundamental possible worlds, not composite ones.';
+                    q1Feedback.className = 'quiz-feedback incorrect';
+                }
+                q1Feedback.style.display = 'block';
+            }
+
+            // Question 2
+            const q2Answer = document.querySelector('input[name="q2"]:checked');
+            const q2Feedback = document.getElementById('q2feedback');
+            
+            if (q2Answer) {
+                if (q2Answer.value === 'b') {
+                    q2Feedback.textContent = 'Correct! World size is calculated as 1/n, creating an inverse relationship.';
+                    q2Feedback.className = 'quiz-feedback correct';
+                } else {
+                    q2Feedback.textContent = 'Incorrect. World size is calculated as 1/n (inverse of the number).';
+                    q2Feedback.className = 'quiz-feedback incorrect';
+                }
+                q2Feedback.style.display = 'block';
+            }
+        }
+
+        // Utility functions
+        function isPrimeNumber(n) {
+            if (n < 2) return false;
+            for (let i = 2; i <= Math.sqrt(n); i++) {
+                if (n % i === 0) return false;
+            }
+            return true;
+        }
+
+        function getPrimeFactors(n) {
+            const factors = [];
+            let d = 2;
+            while (d * d <= n) {
+                while (n % d === 0) {
+                    factors.push(d);
+                    n /= d;
+                }
+                d++;
+            }
+            if (n > 1) factors.push(n);
+            return factors;
+        }
+
+        // Add event listeners for quiz
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'q1' || e.target.name === 'q2') {
+                checkQuizAnswers();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', initTutorial);
+    </script>
+</body>
+</html>

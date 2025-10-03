@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Space Visualizer - Flowchart Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+
+        .visualization-area {
+            flex: 1;
+            position: relative;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .input-section {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .input-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .number-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .number-input input {
+            width: 80px;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .number-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.clear {
+            background: #dc3545;
+        }
+
+        .visualization-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .world-display {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            border: 2px dashed #dee2e6;
+            border-radius: 15px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+        }
+
+        .world-circle {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c3e50;
+            border: 3px solid #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .world-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .world-circle.prime {
+            background: white;
+            border-color: #333;
+        }
+
+        .world-circle.composite {
+            background: #007bff;
+            border-color: #0056b3;
+            color: white;
+        }
+
+        .world-circle.intersecting {
+            background: rgba(0, 123, 255, 0.3);
+            border-color: #007bff;
+            color: #2c3e50;
+        }
+
+        .info-panel {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .info-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-group:last-child {
+            border-bottom: none;
+        }
+
+        .info-group h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .info-item strong {
+            color: #495057;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+
+        .legend-circle.prime {
+            background: white;
+        }
+
+        .legend-circle.composite {
+            background: #007bff;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #6c757d;
+            font-size: 1.2em;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .info-panel {
+                width: 100%;
+                height: 200px;
+                order: 2;
+            }
+
+            .visualization-area {
+                height: calc(100vh - 300px);
+                order: 1;
+            }
+
+            .world-display {
+                width: 90%;
+                height: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 Modal Space Visualizer</h1>
+            <a href="index.html" class="nav-link">← Back to Main</a>
+        </div>
+
+        <div class="main-content">
+            <div class="visualization-area">
+                <div class="input-section">
+                    <h3>Enter a Number</h3>
+                    <div class="number-input">
+                        <input type="number" id="numberInput" value="12" min="2" max="1000" placeholder="Enter number">
+                        <button class="btn" onclick="visualizeNumber()">Visualize</button>
+                        <button class="btn secondary" onclick="clearVisualization()">Clear</button>
+                    </div>
+                </div>
+
+                <div class="visualization-container">
+                    <div class="world-display" id="worldDisplay">
+                        <div class="empty-state">
+                            <h3>Enter a number to visualize</h3>
+                            <p>Prime numbers will show as white circles<br>Composite numbers will show as intersecting blue circles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-group">
+                    <h3>Legend</h3>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-circle prime"></div>
+                            <span>Prime Number (1 circle)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-circle composite"></div>
+                            <span>Composite Factor (intersecting circles)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <h3>Number Analysis</h3>
+                    <div id="numberAnalysis">
+                        <div class="info-item">
+                            <strong>Type:</strong> <span id="numberType">-</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Prime Factors:</strong> <span id="primeFactors">-</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Number of Circles:</strong> <span id="circleCount">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <h3>Examples</h3>
+                    <div class="info-item">
+                        <strong>Prime (7):</strong> 1 white circle
+                    </div>
+                    <div class="info-item">
+                        <strong>Composite (12):</strong> 3 blue circles (2, 2, 3)
+                    </div>
+                    <div class="info-item">
+                        <strong>Composite (6):</strong> 2 blue circles (2, 3)
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <h3>Quick Test</h3>
+                    <button class="btn" onclick="testNumber(7)">Test Prime (7)</button>
+                    <button class="btn" onclick="testNumber(12)">Test Composite (12)</button>
+                    <button class="btn" onclick="testNumber(15)">Test Composite (15)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCircles = [];
+        let currentNumber = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Allow Enter key to trigger visualization
+            document.getElementById('numberInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    visualizeNumber();
+                }
+            });
+        });
+
+        function visualizeNumber() {
+            const input = document.getElementById('numberInput');
+            const number = parseInt(input.value);
+            
+            if (number < 2) {
+                alert('Please enter a number greater than 1');
+                return;
+            }
+
+            currentNumber = number;
+            clearVisualization();
+            createVisualization(number);
+            updateAnalysis(number);
+        }
+
+        function testNumber(number) {
+            document.getElementById('numberInput').value = number;
+            visualizeNumber();
+        }
+
+        function createVisualization(number) {
+            const worldDisplay = document.getElementById('worldDisplay');
+            worldDisplay.innerHTML = '';
+
+            const isPrime = isPrimeNumber(number);
+            const primeFactors = getPrimeFactors(number);
+
+            if (isPrime) {
+                // Create single white circle for prime
+                createCircle(number, 'prime', 0, 0, 120);
+            } else {
+                // Create intersecting blue circles for composite
+                createIntersectingCircles(number, primeFactors);
+            }
+        }
+
+        function createCircle(number, type, x, y, size) {
+            const worldDisplay = document.getElementById('worldDisplay');
+            const circle = document.createElement('div');
+            
+            circle.className = `world-circle ${type}`;
+            circle.textContent = number;
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+            circle.style.left = (300 + x - size/2) + 'px';
+            circle.style.top = (200 + y - size/2) + 'px';
+            
+            circle.addEventListener('click', () => {
+                showCircleInfo(number, type);
+            });
+            
+            worldDisplay.appendChild(circle);
+            currentCircles.push(circle);
+        }
+
+        function createIntersectingCircles(number, primeFactors) {
+            const worldDisplay = document.getElementById('worldDisplay');
+            const factorCount = primeFactors.length;
+            const circleSize = 80;
+            const spacing = 60; // Distance between circle centers
+            
+            // Calculate positions for intersecting circles
+            const positions = [];
+            
+            if (factorCount === 2) {
+                // Two circles side by side
+                positions.push([-spacing/2, 0]);
+                positions.push([spacing/2, 0]);
+            } else if (factorCount === 3) {
+                // Three circles in triangle
+                positions.push([0, -spacing/2]);
+                positions.push([-spacing/2, spacing/2]);
+                positions.push([spacing/2, spacing/2]);
+            } else if (factorCount === 4) {
+                // Four circles in square
+                positions.push([-spacing/2, -spacing/2]);
+                positions.push([spacing/2, -spacing/2]);
+                positions.push([-spacing/2, spacing/2]);
+                positions.push([spacing/2, spacing/2]);
+            } else {
+                // More than 4 factors - arrange in circle
+                for (let i = 0; i < factorCount; i++) {
+                    const angle = (i / factorCount) * Math.PI * 2;
+                    const x = Math.cos(angle) * spacing/2;
+                    const y = Math.sin(angle) * spacing/2;
+                    positions.push([x, y]);
+                }
+            }
+
+            // Create circles at calculated positions
+            primeFactors.forEach((factor, index) => {
+                const [x, y] = positions[index];
+                createCircle(factor, 'composite', x, y, circleSize);
+            });
+
+            // Add main number label in center
+            const centerLabel = document.createElement('div');
+            centerLabel.style.position = 'absolute';
+            centerLabel.style.left = '50%';
+            centerLabel.style.top = '50%';
+            centerLabel.style.transform = 'translate(-50%, -50%)';
+            centerLabel.style.fontSize = '24px';
+            centerLabel.style.fontWeight = 'bold';
+            centerLabel.style.color = '#2c3e50';
+            centerLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+            centerLabel.style.padding = '10px 15px';
+            centerLabel.style.borderRadius = '10px';
+            centerLabel.style.border = '2px solid #333';
+            centerLabel.textContent = number;
+            worldDisplay.appendChild(centerLabel);
+        }
+
+        function showCircleInfo(number, type) {
+            const info = type === 'prime' ? 
+                `Prime number ${number}` : 
+                `Factor ${number} of composite number`;
+            alert(info);
+        }
+
+        function clearVisualization() {
+            const worldDisplay = document.getElementById('worldDisplay');
+            worldDisplay.innerHTML = `
+                <div class="empty-state">
+                    <h3>Enter a number to visualize</h3>
+                    <p>Prime numbers will show as white circles<br>Composite numbers will show as intersecting blue circles</p>
+                </div>
+            `;
+            currentCircles = [];
+            currentNumber = null;
+            updateAnalysis(null);
+        }
+
+        function updateAnalysis(number) {
+            if (!number) {
+                document.getElementById('numberType').textContent = '-';
+                document.getElementById('primeFactors').textContent = '-';
+                document.getElementById('circleCount').textContent = '-';
+                return;
+            }
+
+            const isPrime = isPrimeNumber(number);
+            const primeFactors = getPrimeFactors(number);
+            const circleCount = isPrime ? 1 : primeFactors.length;
+
+            document.getElementById('numberType').textContent = isPrime ? 'Prime' : 'Composite';
+            document.getElementById('primeFactors').textContent = primeFactors.join(' × ');
+            document.getElementById('circleCount').textContent = circleCount;
+        }
+
+        // Utility functions
+        function isPrimeNumber(n) {
+            if (n < 2) return false;
+            for (let i = 2; i <= Math.sqrt(n); i++) {
+                if (n % i === 0) return false;
+            }
+            return true;
+        }
+
+        function getPrimeFactors(n) {
+            const factors = [];
+            let d = 2;
+            while (d * d <= n) {
+                while (n % d === 0) {
+                    factors.push(d);
+                    n /= d;
+                }
+                d++;
+            }
+            if (n > 1) factors.push(n);
+            return factors;
+        }
+    </script>
+</body>
+</html>
