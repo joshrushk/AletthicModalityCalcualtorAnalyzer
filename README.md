@@ -1,4 +1,8 @@
-# Modal Realism Calculator Suite with Database & Messaging
+# AletthicModalityCalcualtorAnalyzer
+
+A very accurate modal logic (all logics are included actually) calculator and sentence/propositional analyzer. Very useful for academia and more.
+
+## Modal Realism Calculator Suite with Database & Messaging
 
 A comprehensive web application for exploring Takashi Yagisawa's Extended Modal Realism with user authentication, database storage, encrypted passwords, real-time messaging, and social login integration.
 
